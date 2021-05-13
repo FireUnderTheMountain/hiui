@@ -1,0 +1,55 @@
+## Interface: 90002
+## Title: hiUI Core
+## Description: UI Tweaks Compilation for hiUI
+## Author: Haruka Ikazan
+## Version: 90002-9.0.2
+## Notes: Tweaks to the UI layout for a specific layout
+## OptionalDeps: Ace3, libdatabroker-1-1, AAP-Core, BasicMinimap, bobSatchels, Broker_Everything, Candy, CTATracker, Details, Dominos, Executive_Assistant, Grid2, QuestStash, Raven, Raven_Options, !KalielsTracker, XLoot_Frame, XLoot_Group, XLoot_Master
+## SavedVariables: HiuiAADB
+## X-Embeds: Ace3
+
+lib\Ace3\LibStub\LibStub.lua
+lib\Ace3\CallbackHandler-1.0\CallbackHandler-1.0.xml
+lib\Ace3\AceAddon-3.0\AceAddon-3.0.xml
+lib\Ace3\AceEvent-3.0\AceEvent-3.0.xml
+lib\Ace3\AceDB-3.0\AceDB-3.0.xml
+lib\Ace3\AceDBOptions-3.0\AceDBOptions-3.0.xml
+lib\Ace3\AceConsole-3.0\AceConsole-3.0.xml
+lib\Ace3\AceGUI-3.0\AceGUI-3.0.xml
+lib\Ace3\AceConfig-3.0\AceConfig-3.0.xml
+
+lib\libdatabroker-1-1\LibDataBroker-1.1.lua
+
+locallib.lua
+
+aceInit.lua
+ldb.lua
+
+modules\grid2.lua
+modules\accountwideinterfaceoptions.lua
+
+# init.lua
+#textures.lua
+
+# units\aap.lua
+# units\bobsatchels.lua
+# units\candy.lua
+# units\chatframe.lua
+# units\ctatracker.lua
+# units\details.lua
+# units\dominos.lua
+# units\executiveassistant.lua
+# units\extraquestbutton.lua
+# units\grid2.lua
+# units\minimap.lua
+# units\queststash.lua
+# units\questframe.lua
+# units\raven.lua
+# units\reflux.lua
+# units\viewport.lua
+# units\aapandkaliels.lua
+
+# units\interface.lua
+# units\accountwideinterfaceoptions.lua
+
+# main.lua

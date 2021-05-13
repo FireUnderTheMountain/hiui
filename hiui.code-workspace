@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../hiAlert"
+		},
+		{
+			"path": "../oUF_Hiui"
+		}
+	],
+	"settings": {
+		"editor.suggest.filterGraceful": true,
+	}
+}
