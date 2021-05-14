@@ -156,7 +156,7 @@ function TrackingStorage_Save(sparse)
         active = (active or false) -- these shenanigans seem unnecessary in modern wow
         local different = mainTracking[t] ~= nil and mainTracking[t] ~= active
         --Hiui:Print(t, " is ", different, "different from ", mainTracking[t], ".")
-        if mainTracking[t] == nil then -- for some reason this never runs.
+        if mainTracking[t] == nil then
         --if not mainTracking[t] and mainTracking[t] ~= false then
             mainTracking[t] = active
             Hiui:Print("Found new tracking \"" .. t .. "\".")
