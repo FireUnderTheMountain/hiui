@@ -64,6 +64,7 @@ defaults.global.modules[name] = {
 }
 defaults.profile.modules[name] = {
     enabled = true, -- default state of module
+    always_apply_profiles = false,
 }
 
 local features = {
@@ -95,6 +96,10 @@ local features = {
     hide_minimap_icon = function(_)
         RunSlashCmd("/grid2 minimapicon hide")
         Hiui:Print("Grid2 minimap icon hidden.")
+    end,
+    toggle_always_apply_profiles = function(_, val)
+        profile.always_apply_profiles = val
+        return val
     end,
 }
 features.auto_set_profiles = function(_)
@@ -145,7 +150,7 @@ local options = {
         },
         hide_minimap_icon = {
             name = "Hide Minimap Icon",
-            desc = "Hide Minimap Icon",
+            --confirmText = "Hide Minimap Icon",
             type = "execute",
             func = features.hide_minimap_icon,
             order = 3,
@@ -158,7 +163,7 @@ local options = {
         },
         set_current_profile = {
 			name = "Set Current Spec Profile",
-			desc = "Set your current spec to Hiui profile for Grid2?",
+			confirmText = "Set your current Grid2 profile to the Hiui profile for this spec?",
 			type = "execute",
 			confirm = true,
 			func = function()
@@ -168,12 +173,22 @@ local options = {
             order = 5,
 		},
         set_all_profiles = {
-            name = "Set All Profiles",
-            desc = "Set all Grid2 profiles to Hiui defaults.",
+            name = "Reset All Profiles",
+            desc = "Set all your Grid2 profiles on this character to the Hiui profiles.",
+            confirmText = "This will change all this character's Grid2 profiles to the Hiui profiles.",
             type = "execute",
             confirm = true,
             func = features.auto_set_profiles,
             order = 6,
+        },
+        apply_profiles_on_login = {
+            name = "Change every character's Grid2 profiles to Hiui's profiles",
+            desc = "Normally Hiui changes each character's Grid2 profiles only once. This option will apply them at every login. NOTICE: This will not destroy your other profiles, it will only change which one is used. You can always uncheck this and change back later.",
+            width = "full",
+            type = "toggle",
+            set = features.toggle_always_apply_profiles,
+            get = function(_) return profile.always_apply_profiles end,
+            order = 7,
         }
     },
 }
@@ -239,7 +254,9 @@ function mod:OnEnable()
 	end
 
     --[[ Module specific on-run routines go here. --]]
-    -- ...
+    if profile.always_apply_profiles == true then
+        C_Timer.After(0.2, features.auto_set_profiles) -- dislike duplication but this keeps it clean.
+    end
 end
 
 function mod:OnDisable()
