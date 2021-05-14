@@ -39,14 +39,13 @@ defaults.char.modules[name] = {
 }
 
 --[[    INTERFACE OPTIONS DECLARATIONS --]]
-local i = "InterfaceOptions"
 local panels = {
-    i .. "ControlsPanel",
-    i .. "CombatPanel",
-    i .. "DisplayPanel",
-    i .. "SocialPanel",
-    i .. "ActionBarsPanel",
-    i .. "NamesPanel",
+    "InterfaceOptionsControlsPanel",
+    "InterfaceOptionsCombatPanel",
+    "InterfaceOptionsDisplayPanel",
+    "InterfaceOptionsSocialPanel",
+    "InterfaceOptionsActionBarsPanel",
+    "InterfaceOptionsNamesPanel",
 }
 local knownUnhandledFrames = {
     InterfaceOptionsDisplayPanelResetTutorials = true,
@@ -151,19 +150,20 @@ function InterfaceOptionsStorage_Load()
 end
 
 function TrackingStorage_Save(sparse)
-    local sparse = (sparse and true or false)
+    sparse = (sparse and true or false)
     for i=1, GetNumTrackingTypes() do
-        local name, _, active, _ = GetTrackingInfo(i)
-        local active = (active or false)
-        local different = (mainTracking[name] and mainTracking[name] ~= active)
-
-        if mainTracking[name] == nil then
-            mainTracking[name] = active
-            --msg("Adding new tracking type " .. name .. " to defaults.", true)
+        local t, _, active, _ = GetTrackingInfo(i)
+        active = (active or false) -- these shenanigans seem unnecessary in modern wow
+        local different = mainTracking[t] ~= nil and mainTracking[t] ~= active
+        --Hiui:Print(t, " is ", different, "different from ", mainTracking[t], ".")
+        if mainTracking[t] == nil then -- for some reason this never runs.
+        --if not mainTracking[t] and mainTracking[t] ~= false then
+            mainTracking[t] = active
+            Hiui:Print("Found new tracking \"" .. t .. "\".")
         elseif different and not sparse then
-            mainTracking[name] = active
-            local m = active and ("Tracking \"" .. name .. "\".") or ("Setting \"" .. name .. "\" tracking inactive.")
-            --msg(m, DEBUG_TRACKING_SAVE)
+            mainTracking[t] = active
+            local m = active and ("Tracking \"" .. t .. "\".") or ("Setting \"" .. t .. "\" tracking inactive.")
+            Hiui:Print(m)
         end
     end
     Hiui:Print("Your current character's tracking has been saved.")
@@ -247,6 +247,8 @@ local features = {
         local did = TrackingStorage_Save()
         if did == "Saved" then
             profile.interfaceOptionsStorage[0] = true
+        else
+            Hiui:Print("Updating minimap tracking failed.")
         end
     end,
 
@@ -254,6 +256,8 @@ local features = {
         local did = TrackingStorage_Save(true)
         if did == "Saved" then
             profile.interfaceOptionsStorage[0] = true
+        else
+            Hiui:Print("Sparse minimap tracking update failed.")
         end
     end,
 
@@ -422,7 +426,7 @@ function mod:OnInitialize()
     --[[ Module specific on-load routines go here. --]]
     ios = profile.interfaceOptionsStorage
     mainTracking = profile.trackingStorage
-    you = UnitName("player")
+    --you = UnitName("player") -- unused
 end
 
 function mod:OnEnable()
