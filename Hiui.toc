@@ -27,6 +27,7 @@ ldb.lua
 
 modules\grid2.lua
 modules\bagsync.lua
+modules\chatframe.lua
 modules\accountwideinterfaceoptions.lua
 
 # init.lua
