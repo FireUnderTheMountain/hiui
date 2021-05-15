@@ -61,14 +61,8 @@ local options = {
     name = name .. " Options",
     type = "group",
     args = {
-        disabledWarning = {
-            order = 0,
-            name = "Disabled! None of the options will function until you enable it again.",
-            type = "description",
-            width = "full",
-        },
         enable = {
-            order = 1,
+            order = 0,
             name = "Enable " .. name,
             desc = "Check to enable this module.",
 			width = "full",
@@ -84,6 +78,12 @@ local options = {
             get = function(info)
                 return profile.enabled
             end,
+        },
+        disabledWarning = {
+            order = 1,
+            name = "Disabled! None of the options will function until you enable it again.",
+            type = "description",
+            width = "full",
         },
         exampleoption = {
 			name = "Function",
@@ -125,7 +125,7 @@ local function disableArgs(optionsTable)
 end
 
 function mod:OnInitialize()
-    mod:print(name .. " initialized.")
+    Hiui:Print(name .. " initialized.")
 
     --[[ data initialization. do not modify. --]]
     db = Hiui.db
@@ -144,7 +144,7 @@ function mod:OnInitialize()
 end
 
 function mod:OnEnable()
-    mod:print(name .. " enabled.")
+    Hiui:Print(name .. " enabled.")
     enableArgs(options) -- do not remove.
 
     --[[ First time enablement, run if we've updated this module. --]]
@@ -159,7 +159,7 @@ function mod:OnEnable()
 end
 
 function mod:OnDisable()
-    mod:print(name .. " disabled.")
+    Hiui:Print(name .. " disabled.")
     disableArgs(options) -- do not remove.
 
     --[[ Module specific on-disable routines go here. --]]
