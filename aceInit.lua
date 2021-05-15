@@ -22,6 +22,7 @@ Hiui.defaults = {
 				enabled = false,
 			},
 		},
+		world_tools_opie_string="oetohH7 TWzINIq q4Xdswt oy92q32 q4iaEwm ount932 q4N0bwi tem932q 4KBE1q3 230w07U SE070Du se06212 1spell0 B0G0H0H 70F8232 391y4w9 1i430wR eset06A ll06Ins tances9 1i4q4DW 11o4w0Q label06 Reset0y 07SCRIP T070Dsc ript06R esetIns tances0 Y0U0N0y 91y43ww World06 Tools91 34wALT0 AW9144.",
 	},
 	char = {
 		-- Store confirmation bools for changes here,
@@ -44,20 +45,33 @@ local options = {
 			desc = "UwU wots dis",
 			descStyle = "inline",
 			type = "toggle",
-			set = function(info, val) print((db.global.debug and "Debug is currently enabled.") or "Debug not enabled.") db.profile.testtoggled = val end,
-			get = function(info) return db.profile.testtoggled end,
+			set = function(_, val) print((db.global.debug and "Debug is currently enabled.") or "Debug not enabled.") db.profile.testtoggled = val end,
+			get = function(_) return db.profile.testtoggled end,
 		},
 		printmessage = {
 			name = "Print a message.",
 			type = "execute",
 			desc = "Print message in chat.",
-			func = function(info) print("o hi.") end,
+			func = function(_) print("o hi.") end,
 		},
 		debug = {
 			name = "Print verbose debugging messages.",
 			type = "toggle",
-			get = function(info) return db.global.debug end,
-			set = function(info, val) db.global.debug = val end,
+			get = function(_) return db.global.debug end,
+			set = function(_, val) db.global.debug = val end,
+		},
+		opie_string = {
+			name = "\"World Tools\" oPie Import String",
+			desc = "Paste this string into oPie and bind a key to it for full BagSync functionality. Interface -> AddOns -> oPie -> Custom Rings -> New Ring -> Import Snapshot",
+            width = "full",
+			type = "input",
+            multiline = 5,
+            set = function(info, value)
+                info.option.get()
+            end,
+            get = function(_)
+                return db.profile.world_tools_opie_string
+            end,
 		},
 		modules = {
 			name = "Modules",
