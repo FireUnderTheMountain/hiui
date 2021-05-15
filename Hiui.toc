@@ -26,6 +26,7 @@ aceInit.lua
 ldb.lua
 
 modules\grid2.lua
+modules\bagsync.lua
 modules\accountwideinterfaceoptions.lua
 
 # init.lua
