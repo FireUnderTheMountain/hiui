@@ -2,9 +2,9 @@ local Hiui = Hiui
 local name = "Grid2 Customizations"
 local mod = Hiui:NewModule(name)
 mod.modName = name
-mod.version = 1.4
+mod.version = 1.5
 local _, pClass = UnitClass("player")
-local Grid2DB
+local Grid2DB -- local reference to Grid2's saved-vars db.
 
 local ge = {
     Healer = "Hiui-Healer",
@@ -59,12 +59,15 @@ local defaults = Hiui.defaults
 --]]
 defaults.global.modules[name] = {
     debug = true, -- print ugly debug messages
-    initialized = false, -- created the -Healer, -Damager and -Tank profiles.
 
 }
 defaults.profile.modules[name] = {
     enabled = true, -- default state of module
     always_apply_profiles = false,
+    --initialized = 0, -- created the -Healer, -Damager and -Tank profiles.
+}
+defaults.char.modules[name] = {
+    initialized = 0, -- first time login
 }
 
 local features = {
@@ -233,6 +236,11 @@ function mod:OnInitialize()
 
     --[[ Module specific on-load routines go here. --]]
     Grid2DB = getGrid2DB()
+
+    --[[ Fix last patch ]]
+    if type(char.initialized) == "boolean" then
+        char.initialized = 0
+    end
 end
 
 function mod:OnEnable()
@@ -240,10 +248,10 @@ function mod:OnEnable()
     enableArgs(options) -- do not remove.
 
     --[[ First time enablement, run if we've updated this module. --]]
-    if not global.initialized then
-        -- long term we should iterate through the db checking for the profile names explicitly
+    if global.initialized < mod.version then
+        -- long term we should iterate through the grid db checking for the profile names explicitly
         features.init_hiui_profiles()
-        global.initialized = true
+        global.initialized = mod.version
     end
 
 	if char.initialized < mod.version then
