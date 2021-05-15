@@ -4,11 +4,8 @@
 --]]
 local Hiui = Hiui
 local name, version = "Chat Frame Mods", 0.1
-local mod = Hiui:NewModule(name)
+local mod = Hiui:NewModule(name, "AceEvent-3.0")
 mod.modName, mod.version = name, version
-
-local uiWidth = UIParent:GetWidth()
-local MCF = _G["ChatFrame1"]
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
@@ -17,6 +14,24 @@ local MCF = _G["ChatFrame1"]
     Hiui.db.char.modules[name]
 ]]
 local db, global, profile, char
+
+
+local uiWidth = UIParent:GetWidth()
+local MCF = _G["ChatFrame1"]
+
+function mod:PLAYER_REGEN_DISABLED()
+    if profile.shrink_chat_during_combat then
+        MCF:SetWidth(profile.width.ic)
+        MCF.timeVisibleSecs = 10
+    end
+end
+
+function mod:PLAYER_REGEN_ENABLED()
+    if profile.shrink_chat_during_combat then
+        MCF:SetWidth(profile.width.ooc)
+        MCF.timeVisibleSecs = 120
+    end
+end
 
 --[[    Default Values
     In each module, you can begin editing defaults for this module by using defaults.global|profile|char.modules.MyModule
@@ -32,13 +47,14 @@ defaults.global.modules[name] = {
 defaults.profile.modules[name] = {
     enabled = true,
     width = {
-        ic = uiWidth/4,
-        ooc = uiWidth*10/54.352,
+        ooc = uiWidth/4,
+        ic = uiWidth*10/54.352,
     },
-    height = UIParent:GetHeight()*10/36, -- mostly irrelevant.
+    --height = UIParent:GetHeight()*10/36, -- mostly irrelevant.
     bottomOffset = 23,
     leftOffset = 35,
     corner_chat_every_login = false, -- useful if you move chat around often.
+    shrink_chat_during_combat = true,
 }
 defaults.char.modules[name] = {
 }
@@ -77,7 +93,17 @@ local features = {
                 Hiui:Print("Debug: " .. (bitt or "No point") .. " to " .. (target:GetName() or "no frame") .. " " .. (anchor or "no anchor"))
             end
         end
-    end
+    end,
+    toggle_chat_slimming = function(_, val)
+        if val ~= nil then 
+            profile.shrink_chat_during_combat = val
+        end
+
+        if profile.shrink_chat_during_combat then
+        else
+            
+        end
+    end,
 }
 
 
@@ -113,19 +139,36 @@ local options = {
             type = "description",
             width = "full",
         },
-        exampleoption = {
+        corner_chat = {
+            order = 2,
 			name = "Move Chat To Corner",
             descStyle = "hidden",
 			type = "execute",
 			func = features.corner_chat,
 		},
-        exampleoptiontwo = {
-            order = 2,
+        always_corner_chat = {
+            order = 3,
             name = "Corner Chat Every Login",
             desc = "Reposition chat window in the corner at every single login. Useful if you move the chat around a lot.",
             type = "toggle",
             set = function(_, val) profile.corner_chat_every_login = val or false end,
             get = function(_) return profile.corner_chat_every_login end,
+        },
+        small_chat = {
+            order = 4,
+            name = "Shrink Chat During Combat",
+            desc = "Compress the width of the chatframe during combat to keep your screen clean.",
+            type = "toggle",
+            set = function(_, val)
+                profile.shrink_chat_during_combat = val or false
+            end,
+            get = function(_) return profile.shrink_chat_during_combat end,
+        },
+        header = {
+            name = "Profile Settings",
+            type = "header",
+            width = "half",
+            order = 4,
         },
     },
 }
@@ -184,6 +227,9 @@ function mod:OnEnable()
 	end
 
     --[[ Module specific on-run routines go here. --]]
+    mod:RegisterEvent("PLAYER_REGEN_DISABLED")
+    mod:RegisterEvent("PLAYER_REGEN_ENABLED")
+
     if profile.corner_chat_every_login then
         features.corner_chat()
     end
@@ -194,4 +240,6 @@ function mod:OnDisable()
     disableArgs(options) -- do not remove.
 
     --[[ Module specific on-disable routines go here. --]]
+    mod:UnregisterEvent("PLAYER_REGEN_DISABLED")
+    mod:UnregisterEvent("PLAYER_REGEN_ENABLED")
 end
