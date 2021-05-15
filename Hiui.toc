@@ -1,8 +1,8 @@
-## Interface: 90002
+## Interface: 90005
 ## Title: hiUI Core
 ## Description: UI Tweaks Compilation for hiUI
 ## Author: Haruka Ikazan
-## Version: 90002-9.0.2
+## Version: 90005-9.0.5
 ## Notes: Tweaks to the UI layout for a specific layout
 ## OptionalDeps: Ace3, libdatabroker-1-1, AAP-Core, BasicMinimap, bobSatchels, Broker_Everything, Candy, CTATracker, Details, Dominos, Executive_Assistant, Grid2, QuestStash, Raven, Raven_Options, !KalielsTracker, XLoot_Frame, XLoot_Group, XLoot_Master
 ## SavedVariables: HiuiAADB
