@@ -7,7 +7,7 @@ local topInset = 0
 local bottomInset = 20
 local leftInset = 0
 local rightInset = 0
---** End use config **--
+--** End user config **--
 
 
 function hiui.run.Viewport()

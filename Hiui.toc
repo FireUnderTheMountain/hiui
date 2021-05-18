@@ -25,6 +25,7 @@ locallib.lua
 aceInit.lua
 ldb.lua
 
+modules\viewport.lua
 modules\grid2.lua
 modules\bagsync.lua
 modules\chatframe.lua
