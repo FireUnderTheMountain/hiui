@@ -2,16 +2,16 @@
     In this opening block, only the name of the addon and version needs to be changed.
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
-local Hiui = Hiui
+local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "BagSync", 0.1
 local mod = Hiui:NewModule(name)
 mod.modName, mod.version = name, version
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
-    Hiui.db.global.modules[name]
-    Hiui.db.profile.modules[name]
-    Hiui.db.char.modules[name]
+    mod.db.global.modules[name]
+    mod.db.profile.modules[name]
+    mod.db.char.modules[name]
 --]]
 local db, global, profile, char
 
@@ -22,17 +22,17 @@ local db, global, profile, char
     Hiui.defaults.profile.modules[name].enabled = false
     Hiui.defaults.char.modules[name].initialized = false
 --]]
-local defaults = Hiui.defaults
-defaults.global.modules[name] = {
-    debug = false, -- noisy debugging information.
-}
-defaults.profile.modules[name] = {
-    enabled = true,
-    opie_snapshot_string = "oetohH7 lFOYRRY 30qg01t 1o4w0Ql abel06B lacklis t0y07AC ECONSOL E18BGS0 70Dbgs0 6blackl ist91y4 30q4SDe 1o4w0Ql abel06P rofessi ons0y07 ACECONS OLE18BG S070Dbg s06prof essions 91y430q 4Dbt1o4 w0Qlabe l06Curr ency0y0 7ACECON SOLE18B GS070Db gs06cur rency91 y430q4S BL1o4w0 Qlabel0 6Gold0y 07ACECO NSOLE18 BGS070D bgs06go ld91y43 0q4D4U1 o4w0Qla bel06Se arch0y0 7ACECON SOLE18B GS070Db gs06sea rch91y4 3qq4it2 1q4wBag s9134.",
-}
-defaults.char.modules[name] = {
-    sample_function_run = false,
-    sample_func_two_run = false,
+local defaults = {
+    global = {
+        debug = false, -- noisy debugging information.
+    },
+    profile = {
+        enabled = true,
+        opie_snapshot_string = "oetohH7 lFOYRRY 30qg01t 1o4w0Ql abel06B lacklis t0y07AC ECONSOL E18BGS0 70Dbgs0 6blackl ist91y4 30q4SDe 1o4w0Ql abel06P rofessi ons0y07 ACECONS OLE18BG S070Dbg s06prof essions 91y430q 4Dbt1o4 w0Qlabe l06Curr ency0y0 7ACECON SOLE18B GS070Db gs06cur rency91 y430q4S BL1o4w0 Qlabel0 6Gold0y 07ACECO NSOLE18 BGS070D bgs06go ld91y43 0q4D4U1 o4w0Qla bel06Se arch0y0 7ACECON SOLE18B GS070Db gs06sea rch91y4 3qq4it2 1q4wBag s9134.",
+    },
+    char = {
+        initialized = 0, -- used for first time load
+    },
 }
 
 
@@ -41,20 +41,9 @@ defaults.char.modules[name] = {
     Remember to set/change db values during these functions.
 --]]
 local features = {
-    hide_minimap_button = function(_)
+    hide_minimap_button = function()
         _G["BagSync_MinimapButton"]:Hide()
     end
-	-- sample_function = function(_)
-    --     char.sample_function_run = true
-    --     return
-	-- end,
-    -- sample_func_two = function(_, value)
-    --     if value then -- running as "set"
-    --         char.sample_func_two_run = value
-    --     else -- running as "get"
-    --         return char.sample_func_two_run
-    --     end
-    -- end,
 }
 
 --[[    GUI Options Menu
@@ -129,12 +118,10 @@ end
 
 function mod:OnInitialize()
     --[[ data initialization. do not modify. --]]
-    db = Hiui.db
-    db.profile.modules[name] = db.profile.modules[name] or {}
-    db.char.modules[name] = db.char.modules[name] or {}
-    global = db.global.modules[name]
-    profile = db.profile.modules[name]
-    char = db.char.modules[name]
+    self.db = Hiui.db:RegisterNamespace(name, defaults)
+    global = self.db.global
+    profile = self.db.profile
+    char = self.db.char
 
     --[[ option page initialization. do not modify. --]]
     LibStub("AceConfig-3.0"):RegisterOptionsTable(name, options);
@@ -145,7 +132,6 @@ function mod:OnInitialize()
 end
 
 function mod:OnEnable()
-    Hiui:Print(name .. " enabled.")
     enableArgs(options) -- do not remove.
 
     --[[ First time enablement, run if we've updated this module. --]]
@@ -161,7 +147,6 @@ function mod:OnEnable()
 end
 
 function mod:OnDisable()
-    Hiui:Print(name .. " disabled.")
     disableArgs(options) -- do not remove.
 
     --[[ Module specific on-disable routines go here. --]]

@@ -1,4 +1,8 @@
-local Hiui = Hiui
+--[[    Header
+    In this opening block, only the name of the addon and version needs to be changed.
+    The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
+--]]
+local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name = "Grid2 Customizations"
 local mod = Hiui:NewModule(name)
 mod.modName = name
@@ -51,21 +55,31 @@ local function getGrid2DB()
     end
 end
 
+--[[    Database Access
+    Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
+    Hiui.db.global.modules[name]
+    Hiui.db.profile.modules[name]
+    Hiui.db.char.modules[name]
+]]
 local db, global, profile, char
 
-local defaults = Hiui.defaults
---[[ In each module, you can begin editing defaults for this module by using defaults.global|profile|char.modules.MyModule
-    For example:
+--[[    Default Values
+    In each module, you can begin editing defaults for this module by using defaults.global|profile|char.modules.MyModule
+    Variables set in init.lua default table don't need to be set unless you want them set differently. They are:
+    Hiui.defaults.global.modules[name].debug = false
+    Hiui.defaults.profile.modules[name].enabled = false
+    Hiui.defaults.char.modules[name].initialized = false
 --]]
-defaults.global.modules[name] = {
-    debug = true, -- print ugly debug messages
-
-}
-defaults.profile.modules[name] = {
-    enabled = true, -- default state of module
-    always_apply_profiles = false,
+local defaults = {
+    global = {
+        debug = true, -- print ugly debug messages
+        initialized = 0,
+    },
+    profile = {
+        enabled = true, -- default state of module
+        always_apply_profiles = false,
     --initialized = 0, -- created the -Healer, -Damager and -Tank profiles.
-    tank_import_string = [=[[=== Hiui-Tank profile ===]
+        tank_import_string = [=[[=== Hiui-Tank profile ===]
     3034F6E300522A427B40671A2D03AAE815A568A8764453D845EA982BD8A4D73A
     2C8324EC111BE0928A6021525A38A04D24A2A78A8262215AE22158D8849E3259
     819A0AE429AAA7984146629AACD4502B35AE729A234514E82250A5A841D355D4
@@ -379,7 +393,7 @@ defaults.profile.modules[name] = {
     0A72AC0A71C4C532A4AC6891560DB644441E662A40994B489CA99890CB81DC1C
     532A4AC4614585474BE448F21A8905AA8A5107A10238664DF33385F1A05000
     [=== Hiui-Tank profile ===]]=],
-    healer_import_string = [=[[=== Hiui-Healer profile ===]
+        healer_import_string = [=[[=== Hiui-Healer profile ===]
     30E474250052982A6415205E41520A6694419B54AAD5494FB42A053C82E81595
     621E990C4315EA1AA6B118F68A8172AA37825BE42A0A60A4418E025286125A87
     88A4C44192D54A4563A84E3252A642A25D94A45959215887949003352A473925
@@ -796,7 +810,7 @@ defaults.profile.modules[name] = {
     4CE3B85D24C07C0EAA4F262C5823D4896E2432598A8B74A2314E1072B08368DE
     C41683C68AA3F10E21360F013607D0360D864300
     [=== Hiui-Healer profile ===]]=],
-    dps_import_string = [=[[=== Hiui-Damager profile ===]
+        dps_import_string = [=[[=== Hiui-Damager profile ===]
     303421C2005215157B0A8D5026811D13295684C33459964927D8A8D649AEB112
     3E0517E092BE094423015925570159861A8A4F0194A982A2C5415563229AF88A
     45329A4AE42A25CB445A4662290731590B358F94826821AAE822980D25A21E9A
@@ -1014,9 +1028,10 @@ defaults.profile.modules[name] = {
     B971E44BB99B662858509D9607D4F281E29A903A29C7660E4F38271E44BB9159
     50820CE163EC544406600D04046C5E6797E22173459B4A260387
     [=== Hiui-Damager profile ===]]=],
-}
-defaults.char.modules[name] = {
-    initialized = 0, -- first time login
+    },
+    char = {
+        initialized = 0, -- used for first time load
+    },
 }
 
 local features = {
@@ -1174,11 +1189,8 @@ local options = {
 
 local function enableArgs(optionsTable)
     for k, v in pairs(optionsTable.args) do
-        if v.disabled then
-            v.disabled = false
-        end
+        if v.disabled then v.disabled = false end
     end
-
     optionsTable.args.disabledWarning.hidden = true
 end
 
@@ -1188,7 +1200,6 @@ local function disableArgs(optionsTable)
             v.disabled = true
         end
     end
-
     optionsTable.args.disabledWarning.hidden = false
 end
 
@@ -1198,12 +1209,11 @@ end
 
 function mod:OnInitialize()
     --[[ data initialization. do not modify. --]]
-    db = Hiui.db
-    db.profile.modules[name] = db.profile.modules[name] or {}
-    db.char.modules[name] = db.char.modules[name] or {}
-    global = db.global.modules[name]
-    profile = db.profile.modules[name]
-    char = db.char.modules[name]
+    self.db = Hiui.db:RegisterNamespace(name, defaults)
+    db = self.db
+    global = db.global
+    profile = db.profile
+    char = db.char
 
     --[[ option page initialization. do not modify. --]]
     LibStub("AceConfig-3.0"):RegisterOptionsTable(name, options);
@@ -1220,7 +1230,6 @@ function mod:OnInitialize()
 end
 
 function mod:OnEnable()
-    Hiui:Print(name .. " enabled.")
     enableArgs(options) -- do not remove.
 
     --[[ First time enablement, run if we've updated this module. --]]
@@ -1244,7 +1253,6 @@ function mod:OnEnable()
 end
 
 function mod:OnDisable()
-    Hiui:Print(name .. " disabled.")
     disableArgs(options) -- do not remove
 
     --[[ Module specific on-disable routines go here. --]]

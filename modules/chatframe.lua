@@ -2,16 +2,17 @@
     In this opening block, only the name of the addon and version needs to be changed.
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
-local Hiui = Hiui
+--local Hiui = Hiui
+local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Chat Frame Mods", 0.1
 local mod = Hiui:NewModule(name, "AceEvent-3.0")
 mod.modName, mod.version = name, version
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
-    Hiui.db.global.modules[name]
-    Hiui.db.profile.modules[name]
-    Hiui.db.char.modules[name]
+    mod.db.global.modules[name]
+    mod.db.profile.modules[name]
+    mod.db.char.modules[name]
 ]]
 local db, global, profile, char
 
@@ -33,6 +34,7 @@ function mod:PLAYER_REGEN_ENABLED()
     end
 end
 
+
 --[[    Default Values
     In each module, you can begin editing defaults for this module by using defaults.global|profile|char.modules.MyModule
     Variables set in init.lua default table don't need to be set unless you want them set differently. They are:
@@ -40,23 +42,25 @@ end
     Hiui.defaults.profile.modules[name].enabled = false
     Hiui.defaults.char.modules[name].initialized = false
 --]]
-local defaults = Hiui.defaults
-defaults.global.modules[name] = {
-    debug = true, -- noisy debugging information.
-}
-defaults.profile.modules[name] = {
-    enabled = true,
-    width = {
-        ooc = uiWidth/4,
-        ic = uiWidth*10/54.352,
+local defaults = {
+    global = {
+        debug = true, -- noisy debugging information.
     },
-    --height = UIParent:GetHeight()*10/36, -- mostly irrelevant.
-    bottomOffset = 23,
-    leftOffset = 35,
-    corner_chat_every_login = false, -- useful if you move chat around often.
-    shrink_chat_during_combat = true,
-}
-defaults.char.modules[name] = {
+    profile = {
+        enabled = true,
+        width = {
+            ooc = uiWidth/4, -- magic number
+            ic = uiWidth*10/54.352, -- magic number
+        },
+        --height = UIParent:GetHeight()*10/36, -- mostly irrelevant.
+        bottomOffset = 32, -- magic number, make user config
+        leftOffset = 32, -- magic number, make user config
+        corner_chat_every_login = false,
+        shrink_chat_during_combat = true,
+    },
+    char = {
+        initialized = 0, -- used for first time load
+    },
 }
 
 
@@ -84,13 +88,13 @@ local features = {
         MCF:StartMoving()
         MCF:ClearAllPoints()
         MCF:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", profile.leftOffset, profile.bottomOffset)
-        MCF:SetWidth(profile.width.ic)
+        MCF:SetWidth(profile.width.ooc)
         MCF:StopMovingOrSizing()
         if global.debug then
             local bitt, target, anchor, left, bot = MCF:GetPoint(1)
-            if (not (left or bot)) or (left > 35.1 or left < 34.9) or (bot > 23.1 or bot < 22.9) then
+            if (not (left or bot)) or (left > (profile.leftOffset + 0.1) or left < (profile.leftOffset - 0.1)) or (bot > (profile.bottomOffset + 0.1) or bot < (profile.bottomOffset - 0.1)) then
                 Hiui:Print("Debug message. Chat frame not cornered. It probably should be!")
-                Hiui:Print("Debug: " .. (bitt or "No point") .. " to " .. (target:GetName() or "no frame") .. " " .. (anchor or "no anchor"))
+                Hiui:Print("Debug: " .. (bitt or "No point") .. " to " .. (target and target:GetName() or "no frame") .. " " .. (anchor or "no anchor"))
             end
         end
     end,
@@ -101,7 +105,6 @@ local features = {
 
         if profile.shrink_chat_during_combat then
         else
-            
         end
     end,
 }
@@ -165,7 +168,7 @@ local options = {
                     MCF:SetWidth(profile.width.ooc)
                 end
             end,
-            get = function(_) return profile.shrink_chat_during_combat end,
+            get = function() return profile.shrink_chat_during_combat end,
         },
         header = {
             name = "Profile Settings",
@@ -199,15 +202,11 @@ local function disableArgs(optionsTable)
 end
 
 function mod:OnInitialize()
-    Hiui:Print(name .. " initialized.")
-
     --[[ data initialization. do not modify. --]]
-    db = Hiui.db
-    db.profile.modules[name] = db.profile.modules[name] or {}
-    db.char.modules[name] = db.char.modules[name] or {}
-    global = db.global.modules[name]
-    profile = db.profile.modules[name]
-    char = db.char.modules[name]
+    self.db = Hiui.db:RegisterNamespace(name, defaults)
+    global = self.db.global
+    profile = self.db.profile
+    char = self.db.char
 
     --[[ option page initialization. do not modify. --]]
     LibStub("AceConfig-3.0"):RegisterOptionsTable(name, options);
@@ -218,7 +217,6 @@ function mod:OnInitialize()
 end
 
 function mod:OnEnable()
-    Hiui:Print(name .. " enabled.")
     enableArgs(options) -- do not remove.
 
     --[[ First time enablement, run if we've updated this module. --]]
@@ -239,7 +237,6 @@ function mod:OnEnable()
 end
 
 function mod:OnDisable()
-    Hiui:Print(name .. " disabled.")
     disableArgs(options) -- do not remove.
 
     --[[ Module specific on-disable routines go here. --]]

@@ -1,13 +1,12 @@
 --[[    Header
     In this opening block, only the name of the addon needs to be changed.
 --]]
-local Hiui = Hiui
+local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name = "Account-wide Interface Options & Tracking"
 local mod = Hiui:NewModule(name)
 mod.modName = name --unnecessary?
 mod.version = 1
-local you
-local db, options
+local options
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
@@ -15,7 +14,7 @@ local db, options
     Hiui.db.profile.modules[name]
     Hiui.db.char.modules[name]
 ]]
-local global, profile, char
+local db, global, profile, char
 
 --[[    Default Values
     In each module, you can begin editing defaults for this module by using defaults.global|profile|char.modules.MyModule
@@ -24,18 +23,22 @@ local global, profile, char
     Hiui.defaults.profile.modules[name].enabled = false
     Hiui.defaults.char.modules[name].initialized = false
 --]]
-local defaults = Hiui.defaults
-defaults.global.modules[name] = {
-    debug = true, -- noisy debugging information.
-}
-defaults.profile.modules[name] = {
-    enabled = true,
-
-    interfaceOptionsStorage = { [0] = false, buttons = { }, dropdowns = { }, },
-    trackingStorage = { [0] = false, },
-    autotrack = false,
-}
-defaults.char.modules[name] = {
+local defaults = {
+    global = {
+        debug = true, -- noisy debugging information.
+    },
+    profile = {
+        enabled = true,
+        interfaceOptionsStorage = { [0] = false,
+            buttons = { },
+            dropdowns = { },
+        },
+        trackingStorage = { [0] = false, },
+        autotrack = false,
+    },
+    char = {
+        initialized = 0, -- used for first time load
+    },
 }
 
 --[[    INTERFACE OPTIONS DECLARATIONS --]]
@@ -411,12 +414,10 @@ end
 
 function mod:OnInitialize()
     --[[ data initialization. do not modify. --]]
-    db = Hiui.db
-    db.profile.modules[name] = db.profile.modules[name] or {}
-    db.char.modules[name] = db.char.modules[name] or {}
-    global = db.global.modules[name]
-    profile = db.profile.modules[name]
-    char = db.char.modules[name]
+    self.db = Hiui.db:RegisterNamespace(name, defaults)
+    global = self.db.global
+    profile = self.db.profile
+    char = self.db.char
 
     --[[ option page initialization. do not modify. --]]
     LibStub("AceConfig-3.0"):RegisterOptionsTable(name, options);
@@ -430,7 +431,6 @@ function mod:OnInitialize()
 end
 
 function mod:OnEnable()
-    Hiui:Print(name .. " enabled.")
     enableArgs(options) -- do not remove.
 
     --[[ First time enablement, run if we've updated this module. --]]
@@ -448,7 +448,6 @@ function mod:OnEnable()
 end
 
 function mod:OnDisable()
-    Hiui:Print(name .. " disabled.")
     disableArgs(options) -- do not remove.
 
     --[[ Module specific on-disable routines go here. --]]

@@ -2,36 +2,38 @@
     In this opening block, only the name of the addon and version needs to be changed.
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
-local Hiui = Hiui
-local name, version = "Test Module", 1
+local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
+local name, version = "Test Module", 0
 local mod = Hiui:NewModule(name)
 mod.modName, mod.version = name, version
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
-    Hiui.db.global.modules[name]
-    Hiui.db.profile.modules[name]
-    Hiui.db.char.modules[name]
+    mod.db.global
+    mod.db.profile
+    mod.db.char
 ]]
 local db, global, profile, char
 
 --[[    Default Values
     In each module, you can begin editing defaults for this module by using defaults.global|profile|char.modules.MyModule
     Variables set in init.lua default table don't need to be set unless you want them set differently. They are:
-    Hiui.defaults.global.modules[name].debug = false
-    Hiui.defaults.profile.modules[name].enabled = false
-    Hiui.defaults.char.modules[name].initialized = false
+    mod.defaults.global.debug = false
+    mod.defaults.profile.enabled = false
+    mod.defaults.char.initialized = false
 --]]
-local defaults = Hiui.defaults
-defaults.global.modules[name] = {
-    debug = true, -- noisy debugging information.
-}
-defaults.profile.modules[name] = {
-    enabled = true,
-}
-defaults.char.modules[name] = {
-    sample_function_run = false,
-    sample_func_two_run = false,
+local defaults = {
+    global = {
+        debug = true, -- noisy debugging information.
+    },
+    profile = {
+        enabled = true, -- used by root to enable
+    },
+    char = {
+        initialized = 0, -- used for first time load
+        sample_function_run = false, -- alternative way to
+        sample_func_two_run = false, -- do first time load
+    },
 }
 
 
@@ -125,15 +127,11 @@ local function disableArgs(optionsTable)
 end
 
 function mod:OnInitialize()
-    Hiui:Print(name .. " initialized.")
-
     --[[ data initialization. do not modify. --]]
-    db = Hiui.db
-    db.profile.modules[name] = db.profile.modules[name] or {}
-    db.char.modules[name] = db.char.modules[name] or {}
-    global = db.global.modules[name]
-    profile = db.profile.modules[name]
-    char = db.char.modules[name]
+    self.db = Hiui.db:RegisterNamespace(name, defaults)
+    global = self.db.global
+    profile = self.db.profile
+    char = self.db.char
 
     --[[ option page initialization. do not modify. --]]
     LibStub("AceConfig-3.0"):RegisterOptionsTable(name, options);
@@ -144,7 +142,12 @@ function mod:OnInitialize()
 end
 
 function mod:OnEnable()
-    Hiui:Print(name .. " enabled.")
+    --[[ For combat-unsafe mods. --]]
+    if InCombatLockdown() then
+        return self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEnable")
+    end
+    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+
     enableArgs(options) -- do not remove.
 
     --[[ First time enablement, run if we've updated this module. --]]
@@ -159,7 +162,6 @@ function mod:OnEnable()
 end
 
 function mod:OnDisable()
-    Hiui:Print(name .. " disabled.")
     disableArgs(options) -- do not remove.
 
     --[[ Module specific on-disable routines go here. --]]

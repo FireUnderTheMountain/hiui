@@ -2,7 +2,7 @@
     In this opening block, only the name of the addon and version needs to be changed.
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
-local Hiui = Hiui
+local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Viewport", 0.1
 local mod = Hiui:NewModule(name, "AceEvent-3.0")
 mod.modName, mod.version = name, version
@@ -28,18 +28,20 @@ local db, global, profile, char
     Hiui.defaults.profile.modules[name].enabled = false
     Hiui.defaults.char.modules[name].initialized = false
 --]]
-local defaults = Hiui.defaults
-defaults.global.modules[name] = {
-    debug = true, -- noisy debugging information.
-}
-defaults.profile.modules[name] = {
-    enabled = true,
-    top_inset = 0, -- unused
-    bottom_inset = 20,
-    left_inset = 0, --unused
-    right_inset = 0,
-}
-defaults.char.modules[name] = {
+local defaults = {
+    global = {
+        debug = true, -- noisy debugging information.
+    },
+    profile = {
+        enabled = true,
+        top_inset = 0, -- unused
+        bottom_inset = 20,
+        left_inset = 0, --unused
+        right_inset = 0,
+    },
+    char = {
+        initialized = 0, -- used for first time load
+    },
 }
 
 local function wfResize(top, left, bottom, right)
@@ -316,15 +318,12 @@ local function disableArgs(optionsTable)
 end
 
 function mod:OnInitialize()
-    Hiui:Print(name .. " initialized.")
-
     --[[ data initialization. do not modify. --]]
-    db = Hiui.db
-    db.profile.modules[name] = db.profile.modules[name] or {}
-    db.char.modules[name] = db.char.modules[name] or {}
-    global = db.global.modules[name]
-    profile = db.profile.modules[name]
-    char = db.char.modules[name]
+    self.db = Hiui.db:RegisterNamespace(name, defaults)
+    db = self.db
+    global = db.global
+    profile = db.profile
+    char = db.char
 
     --[[ option page initialization. do not modify. --]]
     LibStub("AceConfig-3.0"):RegisterOptionsTable(name, options);
@@ -335,9 +334,6 @@ function mod:OnInitialize()
 end
 
 function mod:OnEnable()
-    if global.debug then
-        Hiui:Print(name .. " enabled.")
-    end
     enableArgs(options) -- do not remove.
 
     --[[ First time enablement, run if we've updated this module. --]]
@@ -354,9 +350,6 @@ function mod:OnEnable()
 end
 
 function mod:OnDisable()
-    if global.debug then
-        Hiui:Print(name .. " disabled.")
-    end
     disableArgs(options) -- do not remove.
 
     --[[ Module specific on-disable routines go here. --]]

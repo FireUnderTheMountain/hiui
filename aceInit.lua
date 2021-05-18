@@ -6,7 +6,7 @@ Hiui.optionsName = "Hiui Options Table Main Page"
 local optionsName = tostring(Hiui.optionsName)
 local db
 
-Hiui.defaults = {
+local defaults = {
 	global = {
 		debug = false,
 		modules = {
@@ -34,7 +34,7 @@ Hiui.defaults = {
 		},
 	},
 }
-local defaults = Hiui.defaults
+--local defaults = Hiui.defaults
 
 local options = {
 	name = "hiUI",
@@ -45,7 +45,10 @@ local options = {
 			desc = "UwU wots dis",
 			descStyle = "inline",
 			type = "toggle",
-			set = function(_, val) print((db.global.debug and "Debug is currently enabled.") or "Debug not enabled.") db.profile.testtoggled = val end,
+			set = function(_, val)
+				print((db.global.debug and "Debug is currently enabled.") or "Debug not enabled.")
+				db.profile.testtoggled = val
+			end,
 			get = function(_) return db.profile.testtoggled end,
 		},
 		printmessage = {
@@ -122,7 +125,8 @@ function Hiui:OnEnable()
 
 	-- load modules
 	for modName, mod in self:IterateModules() do
-		if db.profile.modules[modName].enabled then
+		--Hiui:Print(modName)
+		if mod.db.profile.enabled then
 			mod:Enable()
 		end
 	end
