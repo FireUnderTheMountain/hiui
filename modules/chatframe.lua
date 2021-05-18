@@ -161,6 +161,9 @@ local options = {
             type = "toggle",
             set = function(_, val)
                 profile.shrink_chat_during_combat = val or false
+                if not val then
+                    MCF:SetWidth(profile.width.ooc)
+                end
             end,
             get = function(_) return profile.shrink_chat_during_combat end,
         },
