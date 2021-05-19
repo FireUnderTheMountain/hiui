@@ -3,7 +3,7 @@
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
-local name, version = "Test Module", 0
+local name, version = "Details", 0
 local mod = Hiui:NewModule(name)
 mod.modName, mod.version = name, version
 
