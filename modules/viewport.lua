@@ -35,7 +35,7 @@ local defaults = {
     profile = {
         enabled = false,
         top_inset = 0, -- unused
-        bottom_inset = 20,
+        bottom_inset = 30,
         left_inset = 0, --unused
         right_inset = 0,
     },
@@ -77,7 +77,7 @@ features.apply_viewport = function(event, ...)
     local uih = UIParent:GetHeight() * uiScale
     local wfwEsti = WorldFrame:GetWidth() + profile.left_inset + profile.right_inset
     local wfhEsti = WorldFrame:GetHeight() + profile.top_inset + profile.bottom_inset
-    if uiw - wfwEsti > 1 then
+    if uiw - wfwEsti > 1 or wfwEsti - uiw > 1 then
         if InCombatLockdown() then
             if not seenICLerror then
                 Hiui:Print("In combat during WorldFrame resize, will try later.")
@@ -91,7 +91,7 @@ features.apply_viewport = function(event, ...)
         wfResize()
         seenWFerror, seenICLerror = false, false
         return C_Timer.After(2, features.apply_viewport)
-    elseif uih - wfhEsti > 1 then
+    elseif uih - wfhEsti > 1 or wfhEsti - uih > 1 then
         if InCombatLockdown() then
             if not seenICLerror then
                 Hiui:Print("In combat during WorldFrame resize, will try later.")
@@ -182,7 +182,6 @@ local options = {
             end,
             set = function(_, value)
                 profile.top_inset = tonumber(value)
-                wfResize()
                 features.apply_viewport()
             end,
             get = function() return tostring(profile.top_inset) end,
@@ -217,7 +216,6 @@ local options = {
             end,
             set = function(_, value)
                 profile.bottom_inset = tonumber(value)
-                wfResize()
                 features.apply_viewport()
             end,
             get = function() return tostring(profile.bottom_inset) end,
@@ -252,7 +250,6 @@ local options = {
             end,
             set = function(_, value)
                 profile.left_inset = tonumber(value)
-                wfResize()
                 features.apply_viewport()
             end,
             get = function() return tostring(profile.left_inset) end,
@@ -287,7 +284,6 @@ local options = {
             end,
             set = function(_, value)
                 profile.right_inset = tonumber(value)
-                wfResize()
                 features.apply_viewport()
             end,
             get = function() return tostring(profile.right_inset) end,
@@ -337,12 +333,12 @@ function mod:OnEnable()
     enableArgs(options) -- do not remove.
 
     --[[ First time enablement, run if we've updated this module. --]]
-	if char.initialized < mod.version then
-		for _, feature in pairs(features) do
-			feature()
-		end
-		char.initialized = mod.version
-	end
+	-- if char.initialized < mod.version then
+	-- 	for _, feature in pairs(features) do
+	-- 		feature()
+	-- 	end
+	-- 	char.initialized = mod.version
+	-- end
 
     --[[ Module specific on-run routines go here. --]]
     mod:RegisterEvent("PLAYER_ENTERING_WORLD", features.apply_viewport)
@@ -355,4 +351,5 @@ function mod:OnDisable()
     --[[ Module specific on-disable routines go here. --]]
     mod:UnregisterEvent("PLAYER_ENTERING_WORLD")
     mod:UnregisterEvent("CINEMATIC_STOP")
+    wfResize(0, 0, 0, 0)
 end
