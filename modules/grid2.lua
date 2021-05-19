@@ -3,11 +3,10 @@
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
-local name = "Grid2 Customizations"
+local name, version = "Grid2 Customizations", 1.5
 local mod = Hiui:NewModule(name)
-mod.modName = name
-mod.version = 1.5
-local _, pClass = UnitClass("player")
+mod.modName, mod.version = name, version
+
 local Grid2DB -- local reference to Grid2's saved-vars db.
 
 local ge = {
@@ -30,6 +29,7 @@ local specs = {
     WARLOCK = { [1] = ge.Damager, [2] = ge.Damager, [3] = ge.Damager, },
     WARRIOR = { [1] = ge.Damager, [2] = ge.Damager, [3] = ge.Tank, },
 }
+local _, pClass = UnitClass("player")
 local yClass = specs[pClass]
 
 local function getGrid2DB()
@@ -57,18 +57,18 @@ end
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
-    Hiui.db.global.modules[name]
-    Hiui.db.profile.modules[name]
-    Hiui.db.char.modules[name]
-]]
+    mod.db.global
+    mod.db.profile
+    mod.db.char
+--]]
 local db, global, profile, char
 
 --[[    Default Values
-    In each module, you can begin editing defaults for this module by using defaults.global|profile|char.modules.MyModule
-    Variables set in init.lua default table don't need to be set unless you want them set differently. They are:
-    Hiui.defaults.global.modules[name].debug = false
-    Hiui.defaults.profile.modules[name].enabled = false
-    Hiui.defaults.char.modules[name].initialized = false
+    In each module, you can begin editing defaults for this module by using defaults.global|profile|char
+    You should include at least the following:
+    mod.defaults.global.debug = false
+    mod.defaults.profile.enabled = false
+    mod.defaults.char.initialized = false
 --]]
 local defaults = {
     global = {
@@ -76,9 +76,9 @@ local defaults = {
         initialized = 0,
     },
     profile = {
-        enabled = true, -- default state of module
+        enabled = false, -- default state of module
         always_apply_profiles = false,
-    --initialized = 0, -- created the -Healer, -Damager and -Tank profiles.
+        initialized = 0, -- created the -Healer, -Damager and -Tank profiles.
         tank_import_string = [=[[=== Hiui-Tank profile ===]
     3034F6E300522A427B40671A2D03AAE815A568A8764453D845EA982BD8A4D73A
     2C8324EC111BE0928A6021525A38A04D24A2A78A8262215AE22158D8849E3259

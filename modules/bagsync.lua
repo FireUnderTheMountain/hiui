@@ -16,18 +16,18 @@ mod.modName, mod.version = name, version
 local db, global, profile, char
 
 --[[    Default Values
-    In each module, you can begin editing defaults for this module by using defaults.global|profile|char.modules.MyModule
-    Variables set in init.lua default table don't need to be set unless you want them set differently. They are:
-    Hiui.defaults.global.modules[name].debug = false
-    Hiui.defaults.profile.modules[name].enabled = false
-    Hiui.defaults.char.modules[name].initialized = false
+    In each module, you can begin editing defaults for this module by using defaults.global|profile|char
+    You should include at least the following:
+    mod.defaults.global.debug = false
+    mod.defaults.profile.enabled = false
+    mod.defaults.char.initialized = false
 --]]
 local defaults = {
     global = {
         debug = false, -- noisy debugging information.
     },
     profile = {
-        enabled = true,
+        enabled = false,
         opie_snapshot_string = "oetohH7 lFOYRRY 30qg01t 1o4w0Ql abel06B lacklis t0y07AC ECONSOL E18BGS0 70Dbgs0 6blackl ist91y4 30q4SDe 1o4w0Ql abel06P rofessi ons0y07 ACECONS OLE18BG S070Dbg s06prof essions 91y430q 4Dbt1o4 w0Qlabe l06Curr ency0y0 7ACECON SOLE18B GS070Db gs06cur rency91 y430q4S BL1o4w0 Qlabel0 6Gold0y 07ACECO NSOLE18 BGS070D bgs06go ld91y43 0q4D4U1 o4w0Qla bel06Se arch0y0 7ACECON SOLE18B GS070Db gs06sea rch91y4 3qq4it2 1q4wBag s9134.",
     },
     char = {

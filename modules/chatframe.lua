@@ -36,18 +36,18 @@ end
 
 
 --[[    Default Values
-    In each module, you can begin editing defaults for this module by using defaults.global|profile|char.modules.MyModule
-    Variables set in init.lua default table don't need to be set unless you want them set differently. They are:
-    Hiui.defaults.global.modules[name].debug = false
-    Hiui.defaults.profile.modules[name].enabled = false
-    Hiui.defaults.char.modules[name].initialized = false
+    In each module, you can begin editing defaults for this module by using defaults.global|profile|char
+    You should include at least the following:
+    mod.defaults.global.debug = false
+    mod.defaults.profile.enabled = false
+    mod.defaults.char.initialized = false
 --]]
 local defaults = {
     global = {
         debug = true, -- noisy debugging information.
     },
     profile = {
-        enabled = true,
+        enabled = false,
         width = {
             ooc = uiWidth/4, -- magic number
             ic = uiWidth*10/54.352, -- magic number

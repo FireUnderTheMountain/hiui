@@ -15,25 +15,25 @@ local seenICLerror = false
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
-    Hiui.db.global.modules[name]
-    Hiui.db.profile.modules[name]
-    Hiui.db.char.modules[name]
-]]
+    mod.db.global
+    mod.db.profile
+    mod.db.char
+--]]
 local db, global, profile, char
 
 --[[    Default Values
-    In each module, you can begin editing defaults for this module by using defaults.global|profile|char.modules.MyModule
-    Variables set in init.lua default table don't need to be set unless you want them set differently. They are:
-    Hiui.defaults.global.modules[name].debug = false
-    Hiui.defaults.profile.modules[name].enabled = false
-    Hiui.defaults.char.modules[name].initialized = false
+    In each module, you can begin editing defaults for this module by using defaults.global|profile|char
+    You should include at least the following:
+    mod.defaults.global.debug = false
+    mod.defaults.profile.enabled = false
+    mod.defaults.char.initialized = false
 --]]
 local defaults = {
     global = {
         debug = true, -- noisy debugging information.
     },
     profile = {
-        enabled = true,
+        enabled = false,
         top_inset = 0, -- unused
         bottom_inset = 20,
         left_inset = 0, --unused

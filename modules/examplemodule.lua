@@ -12,12 +12,12 @@ mod.modName, mod.version = name, version
     mod.db.global
     mod.db.profile
     mod.db.char
-]]
+--]]
 local db, global, profile, char
 
 --[[    Default Values
-    In each module, you can begin editing defaults for this module by using defaults.global|profile|char.modules.MyModule
-    Variables set in init.lua default table don't need to be set unless you want them set differently. They are:
+    In each module, you can begin editing defaults for this module by using defaults.global|profile|char
+    You should include at least the following:
     mod.defaults.global.debug = false
     mod.defaults.profile.enabled = false
     mod.defaults.char.initialized = false
@@ -27,7 +27,7 @@ local defaults = {
         debug = true, -- noisy debugging information.
     },
     profile = {
-        enabled = true, -- used by root to enable
+        enabled = false, -- used by root to enable
     },
     char = {
         initialized = 0, -- used for first time load
