@@ -18,16 +18,16 @@ local db, global, profile, char
 --[[    Default Values
     In each module, you can begin editing defaults for this module by using defaults.global|profile|char
     You should include at least the following:
-    mod.defaults.global.debug = false
-    mod.defaults.profile.enabled = false
-    mod.defaults.char.initialized = false
+    defaults.global.debug = false
+    defaults.profile.enabled = false
+    defaults.char.initialized = false
 --]]
 local defaults = {
     global = {
-        debug = true, -- noisy debugging information.
+        debug = true, -- noisy debugging
     },
     profile = {
-        enabled = false, -- used by root to enable
+        enabled = false, -- have root addon enable?
     },
     char = {
         initialized = 0, -- used for first time load
