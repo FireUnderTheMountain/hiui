@@ -31,8 +31,8 @@ local defaults = {
     profile = {
         enabled = false,
         interfaceOptionsStorage = { [0] = false,
-            buttons = { },
-            dropdowns = { },
+            buttons = {},
+            dropdowns = {},
         },
         trackingStorage = { [0] = false, },
         autotrack = false,
@@ -272,12 +272,6 @@ local features = {
             profile.trackingStorage[0] = true
         end
     end,
-
-    automaticTrack = function(info, val)
-        profile.autotrack = val
-        return val
-    end,
-
 }
 
 --[[    GUI Options Menu
@@ -385,7 +379,7 @@ local options = {
             name = "Automatically load saved minimap tracking at each login",
             width = "full",
             type = "toggle",
-            set = features.automaticTrack,
+            set = function(_, val) profile.autotrack = val end,
             get = function(info) return profile.autotrack end,
         },
     },
@@ -443,8 +437,8 @@ function mod:OnEnable()
 	end --]]
 
     --[[ Module specific on-run routines go here. --]]
-    if profile.autoload then
-        features.loadTrackingOptions()
+    if profile.autotrack then
+        features.loadTracking()
     end
 end
 
