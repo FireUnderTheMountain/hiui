@@ -3,8 +3,8 @@
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
-local name, version = "Test Module", 0
-local mod = Hiui:NewModule(name)
+local name, version = "Details", 0
+local mod = Hiui:NewModule(name, "AceEvent-3.0")
 mod.modName, mod.version = name, version
 
 --[[    Database Access
