@@ -4,7 +4,7 @@
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Details", 0
-local mod = Hiui:NewModule(name, "AceEvent-3.0")
+local mod = Hiui:NewModule(name)
 mod.modName, mod.version = name, version
 
 --[[    Database Access
@@ -136,6 +136,9 @@ function mod:OnInitialize()
     LibStub("AceConfig-3.0"):RegisterOptionsTable(name, options);
     local parentOptions = tostring(Hiui.optionsName)
     Hiui.optionFrames[name] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(name, options.name, parentOptions)
+
+    --[[ Gray out args, maybe. --]]
+    if not profile.enabled then disableArgs(options) end
 
     --[[ Module specific on-load routines go here. --]]
 end

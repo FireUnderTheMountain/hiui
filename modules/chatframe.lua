@@ -228,8 +228,8 @@ function mod:OnEnable()
 	end
 
     --[[ Module specific on-run routines go here. --]]
-    mod:RegisterEvent("PLAYER_REGEN_DISABLED")
-    mod:RegisterEvent("PLAYER_REGEN_ENABLED")
+    self:RegisterEvent("PLAYER_REGEN_DISABLED")
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
 
     if profile.corner_chat_every_login then
         features.corner_chat()
@@ -240,6 +240,6 @@ function mod:OnDisable()
     disableArgs(options) -- do not remove.
 
     --[[ Module specific on-disable routines go here. --]]
-    mod:UnregisterEvent("PLAYER_REGEN_DISABLED")
-    mod:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    self:UnregisterEvent("PLAYER_REGEN_DISABLED")
+    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
 end
