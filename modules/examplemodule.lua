@@ -137,7 +137,7 @@ function mod:OnInitialize()
     local parentOptions = tostring(Hiui.optionsName)
     Hiui.optionFrames[name] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(name, options.name, parentOptions)
 
-    --[[ Gray out args, maybe. --]]
+    --[[ Gray out args. do not modify. --]]
     if not profile.enabled then disableArgs(options) end
 
     --[[ Module specific on-load routines go here. --]]
