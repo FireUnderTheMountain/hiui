@@ -4,7 +4,7 @@ lib\Ace3\CallbackHandler-1.0.xml
 lib\Ace3\CallbackHandler-1.0.lua
 lib\libdatabroker-1.1\LibDataBroker-1.1.lua
 --]]
-local Hiui = Hiui
+local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 
 
 function Hiui.registerLdb()
@@ -38,7 +38,7 @@ function Hiui.registerLdb()
 			end
 		end,
 		OnEnter = function(self)
-			print("Entered LDB.")
+			print("Right LDB.")
 		end,
 		OnLeave = function(self)
 			print("Left LDB.")
