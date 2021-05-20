@@ -3,8 +3,8 @@
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
-local name, version = "Grid2 Customizations", 1.5
-local mod = Hiui:NewModule(name)
+local name, version = "Grid2", 1.5
+local mod = Hiui:NewModule(name, "AceConsole-3.0")
 mod.modName, mod.version = name, version
 
 local Grid2 -- local reference to Grid2 for db access
@@ -1014,7 +1014,7 @@ local defaults = {
 local features = {
     enable_pps = function(_)
         RunSlashCmd("/grid2 profilesperspec enable")
-        Hiui:Print("Grid2's profiles-per-specialization enabled.")
+        mod:Print("Grid2's profiles-per-specialization enabled.")
     end,
     init_hiui_profiles = function()
         local c = Grid2.db:GetCurrentProfile()
@@ -1023,23 +1023,23 @@ local features = {
         Grid2.db:SetProfile(ge.Damager)
         --Grid2DB:SetProfile(c)
         Grid2:SetProfileForSpec(c)
-        Hiui:Print("Initialized Grid2 profiles for Hiui.")
+        mod:Print("Initialized Grid2 profiles for Hiui.")
     end,
     set_profile = function(p, s)
-        --Hiui:Print("set_profile", p, s, c)
+        --mod:Print("set_profile", p, s, c)
         if p then
             if s then
                 Grid2:SetProfileForSpec(p, s)
-                Hiui:Print("Grid2 profile for spec " .. s .. " set to " .. p .. ".")
+                mod:Print("Grid2 profile for spec " .. s .. " set to " .. p .. ".")
             else
                 Grid2:SetProfileForSpec(p)
-                Hiui:Print("Grid2 profile set to " .. p .. ".")
+                mod:Print("Grid2 profile set to " .. p .. ".")
             end
         end
     end,
     hide_minimap_icon = function(_)
         RunSlashCmd("/grid2 minimapicon hide")
-        Hiui:Print("Grid2 minimap icon hidden.")
+        mod:Print("Grid2 minimap icon hidden.")
     end,
     toggle_always_apply_profiles = function(_, val)
         profile.always_apply_profiles = val
@@ -1052,7 +1052,7 @@ features.auto_set_profiles = function(_)
         if p then
             features.set_profile(p, s)
         else
-            Hiui:Print("Skipped setting profile for spec " .. s .. " because no profile assigned for it..")
+            mod:Print("Skipped setting profile for spec " .. s .. " because no profile assigned for it..")
         end
     end
     return
@@ -1210,17 +1210,17 @@ function mod:OnEnable()
     enableArgs(options) -- do not remove.
 
     --[[ First time enablement, run if we've updated this module. --]]
-    if global.initialized < mod.version then
+    if global.initialized < self.version then
         -- long term we should iterate through the grid db checking for the profile names explicitly
         features.init_hiui_profiles()
-        global.initialized = mod.version
+        global.initialized = self.version
     end
 
-	if char.initialized < mod.version then
+	if char.initialized < self.version then
         features.hide_minimap_icon()
 		features.enable_pps()
         C_Timer.After(0.2, features.auto_set_profiles)
-		char.initialized = mod.version
+		char.initialized = self.version
 	end
 
     --[[ Module specific on-run routines go here. --]]

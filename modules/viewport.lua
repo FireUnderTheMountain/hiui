@@ -4,7 +4,7 @@
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Viewport", 0.1
-local mod = Hiui:NewModule(name, "AceEvent-3.0")
+local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
 
 local UIParent = _G["UIParent"]
@@ -53,7 +53,7 @@ local function wfResize(top, left, bottom, right)
     WorldFrame:SetPoint("TOPLEFT", l or 0, -t or 0)
     WorldFrame:SetPoint("BOTTOMRIGHT", -r or 0, b or 0)
     WorldFrame:SetUserPlaced(true)
-    --Hiui:Print("Frame resized.")
+    --mod:Print("Frame resized.")
 end
 
 --[[    "Features" local variable
@@ -63,11 +63,11 @@ end
 local features = {}
 features.apply_viewport = function(event, ...)
     if global.debug then
-        Hiui:Print("Event:", event, "Bot inset:", profile.bottom_inset)
+        mod:Print("Event:", event, "Bot inset:", profile.bottom_inset)
     end
     if not WorldFrame or GetScreenWidth() < 1 then
         if not seenWFerror then
-            Hiui:Print("Skipping viewport change because addon loaded before WorldFrame. This is an unusual error!")
+            mod:Print("Skipping viewport change because addon loaded before WorldFrame. This is an unusual error!")
             seenWFerror = true
         end
         return C_Timer.After(1, features.apply_viewport)
@@ -80,13 +80,13 @@ features.apply_viewport = function(event, ...)
     if uiw - wfwEsti > 1 or wfwEsti - uiw > 1 then
         if InCombatLockdown() then
             if not seenICLerror then
-                Hiui:Print("In combat during WorldFrame resize, will try later.")
+                mod:Print("In combat during WorldFrame resize, will try later.")
                 seenICLerror = true
             end
             return C_Timer.After(1, features.apply_viewport)
         end
         if global.debug then
-            Hiui:Print("Resizing viewport because width bad.")
+            mod:Print("Resizing viewport because width bad.")
         end
         wfResize()
         seenWFerror, seenICLerror = false, false
@@ -94,18 +94,18 @@ features.apply_viewport = function(event, ...)
     elseif uih - wfhEsti > 1 or wfhEsti - uih > 1 then
         if InCombatLockdown() then
             if not seenICLerror then
-                Hiui:Print("In combat during WorldFrame resize, will try later.")
+                mod:Print("In combat during WorldFrame resize, will try later.")
                 seenICLerror = true
             end
             return C_Timer.After(1, features.apply_viewport)
         end
         if global.debug then
-            Hiui:Print("Resizing viewport because height bad.")
+            mod:Print("Resizing viewport because height bad.")
         end
         wfResize()
         return C_Timer.After(2, features.apply_viewport)
     elseif global.debug then
-        Hiui:Print("Skipping WorldFrame resize because it should be fine already.")
+        mod:Print("Skipping WorldFrame resize because it should be fine already.")
     end
 end
 
@@ -160,7 +160,7 @@ local options = {
             width = "half",
             validate = function(info, data)
                 if global.debug then
-                    Hiui:Print(info, data)
+                    mod:Print(info, data)
                 end
                 local e
                 data = tonumber(data*uiScale)
@@ -194,7 +194,7 @@ local options = {
             width = "half",
             validate = function(info, data)
                 if global.debug then
-                    Hiui:Print(info, data)
+                    mod:Print(info, data)
                 end
                 local e
                 data = tonumber(data*uiScale)
@@ -228,7 +228,7 @@ local options = {
             width = "half",
             validate = function(info, data)
                 if global.debug then
-                    Hiui:Print(info, data)
+                    mod:Print(info, data)
                 end
                 local e
                 data = tonumber(data*uiScale)
@@ -262,7 +262,7 @@ local options = {
             width = "half",
             validate = function(info, data)
                 if global.debug then
-                    Hiui:Print(info, data)
+                    mod:Print(info, data)
                 end
                 local e
                 data = tonumber(data*uiScale)
@@ -341,15 +341,15 @@ function mod:OnEnable()
 	-- end
 
     --[[ Module specific on-run routines go here. --]]
-    mod:RegisterEvent("PLAYER_ENTERING_WORLD", features.apply_viewport)
-    mod:RegisterEvent("CINEMATIC_STOP", features.apply_viewport)
+    self:RegisterEvent("PLAYER_ENTERING_WORLD", features.apply_viewport)
+    self:RegisterEvent("CINEMATIC_STOP", features.apply_viewport)
 end
 
 function mod:OnDisable()
     disableArgs(options) -- do not remove.
 
     --[[ Module specific on-disable routines go here. --]]
-    mod:UnregisterEvent("PLAYER_ENTERING_WORLD")
-    mod:UnregisterEvent("CINEMATIC_STOP")
+    self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+    self:UnregisterEvent("CINEMATIC_STOP")
     wfResize(0, 0, 0, 0)
 end

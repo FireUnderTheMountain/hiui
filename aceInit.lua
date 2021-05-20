@@ -85,7 +85,7 @@ end
 
 function Hiui:OnEnable()
 	for modName, mod in self:IterateModules() do
-		if db.global.debug then Hiui:Print(modName) end
+		if db.global.debug then self:Print(modName) end
 
 		if mod.db.profile.enabled then mod:Enable() end
 	end

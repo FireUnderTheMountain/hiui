@@ -4,7 +4,7 @@
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Account-wide Interface Options & Tracking", 1
-local mod = Hiui:NewModule(name)
+local mod = Hiui:NewModule(name, "AceConsole-3.0")
 mod.modName, mod.version = name, version
 
 local options
@@ -93,7 +93,7 @@ end
 local timerCloseInterfaceOptions -- only useful for debugging
 function InterfaceOptionsStorage_Save()
     if InCombatLockdown() then
-        Hiui:Print("Please wait until combat ends to try to save your variables.")
+        mod:Print("Please wait until combat ends to try to save your variables.")
         return
     end
 
@@ -106,9 +106,9 @@ function InterfaceOptionsStorage_Save()
         local did = InterfaceOptionsStorage_ReadAndSaveInterfacePanel()
         if did == "Saved" then
             ios[0] = true
-            Hiui:Print("HIUI ACE DEBUG: DID THE INTERFACE SAVING!")
+            mod:Print("HIUI ACE DEBUG: DID THE INTERFACE SAVING!")
         else
-            Hiui:Print("HIUI ACE DEBUG: For some resaon didn't save interface settings. Unexpected.")
+            mod:Print("HIUI ACE DEBUG: For some resaon didn't save interface settings. Unexpected.")
         end
         --InterfaceOptionsFrameCancel:Click() -- replace with :hide()
         InterfaceOptionsFrame:Hide()
@@ -122,7 +122,7 @@ local seenIosMessage = false
 function InterfaceOptionsStorage_Load()
     if InCombatLockdown() then
         if not seenIosMessage then
-            Hiui:Print("Restoring cvars not support in combat. Will apply once you leave combat.")
+            mod:Print("Restoring cvars not support in combat. Will apply once you leave combat.")
             seenIosMessage = true
         end
         C_Timer.After(1.5, InterfaceOptionsStorage_Load())
@@ -135,7 +135,7 @@ function InterfaceOptionsStorage_Load()
         local button = _G[b]
         local checkState = button:GetChecked()
         if button:IsEnabled() and checkState ~= desiredState then
-            Hiui:Print("Adjusted interface option " .. b .. ".")
+            mod:Print("Adjusted interface option " .. b .. ".")
             button:SetChecked(not checkState)
             button:GetScript("OnClick")(button) -- Fizzie said to do this.
         end
@@ -145,7 +145,7 @@ function InterfaceOptionsStorage_Load()
     for dd, desiredState in pairs(ios.dropdowns) do
         local dropdown = _G[dd]
         if dropdown:GetValue() ~= desiredState then
-            Hiui:Print("Adjusted interface option " .. dd .. ".")
+            mod:Print("Adjusted interface option " .. dd .. ".")
             dropdown:SetValue(desiredState)
         end
     end
@@ -159,18 +159,18 @@ function TrackingStorage_Save(sparse)
         local t, _, active, _ = GetTrackingInfo(i)
         active = (active or false) -- these shenanigans seem unnecessary in modern wow
         local different = mainTracking[t] ~= nil and mainTracking[t] ~= active
-        --Hiui:Print(t, " is ", different, "different from ", mainTracking[t], ".")
+        --mod:Print(t, " is ", different, "different from ", mainTracking[t], ".")
         if mainTracking[t] == nil then
         --if not mainTracking[t] and mainTracking[t] ~= false then
             mainTracking[t] = active
-            Hiui:Print("Found new tracking \"" .. t .. "\".")
+            mod:Print("Found new tracking \"" .. t .. "\".")
         elseif different and not sparse then
             mainTracking[t] = active
             local m = active and ("Tracking \"" .. t .. "\".") or ("Setting \"" .. t .. "\" tracking inactive.")
-            Hiui:Print(m)
+            mod:Print(m)
         end
     end
-    Hiui:Print("Your current character's tracking has been saved.")
+    mod:Print("Your current character's tracking has been saved.")
     return "Saved"
 end
 
@@ -178,7 +178,7 @@ local seenTrackingMessage = false
 function TrackingStorage_Load()
     if InCombatLockdown() then
         if not seenTrackingMessage then
-            Hiui:Print("Changing tracking settings not support in combat. Will apply once you leave combat.")
+            mod:Print("Changing tracking settings not support in combat. Will apply once you leave combat.")
             seenTrackingMessage = true
         end
         C_Timer.After(1.5, TrackingStorage_Load())
@@ -187,7 +187,7 @@ function TrackingStorage_Load()
     seenTrackingMessage = false
 
     if not next(mainTracking) then
-        Hiui:Print("Can't load your tracking settings because you haven't saved any!")
+        mod:Print("Can't load your tracking settings because you haven't saved any!")
         return
     end
 
@@ -252,7 +252,7 @@ local features = {
         if did == "Saved" then
             profile.interfaceOptionsStorage[0] = true
         else
-            Hiui:Print("Updating minimap tracking failed.")
+            mod:Print("Updating minimap tracking failed.")
         end
     end,
 
@@ -261,7 +261,7 @@ local features = {
         if did == "Saved" then
             profile.interfaceOptionsStorage[0] = true
         else
-            Hiui:Print("Sparse minimap tracking update failed.")
+            mod:Print("Sparse minimap tracking update failed.")
         end
     end,
 

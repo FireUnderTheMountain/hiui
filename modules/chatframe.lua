@@ -5,7 +5,7 @@
 --local Hiui = Hiui
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Chat Frame Mods", 0.1
-local mod = Hiui:NewModule(name, "AceEvent-3.0")
+local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
 
 --[[    Database Access
@@ -93,8 +93,8 @@ local features = {
         if global.debug then
             local bitt, target, anchor, left, bot = MCF:GetPoint(1)
             if (not (left or bot)) or (left > (profile.leftOffset + 0.1) or left < (profile.leftOffset - 0.1)) or (bot > (profile.bottomOffset + 0.1) or bot < (profile.bottomOffset - 0.1)) then
-                Hiui:Print("Debug message. Chat frame not cornered. It probably should be!")
-                Hiui:Print("Debug: " .. (bitt or "No point") .. " to " .. (target and target:GetName() or "no frame") .. " " .. (anchor or "no anchor"))
+                mod:Print("Debug message. Chat frame not cornered. It probably should be!")
+                mod:Print("Debug: " .. (bitt or "No point") .. " to " .. (target and target:GetName() or "no frame") .. " " .. (anchor or "no anchor"))
             end
         end
     end,
