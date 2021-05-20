@@ -7,7 +7,7 @@ local name, version = "Grid2 Customizations", 1.5
 local mod = Hiui:NewModule(name)
 mod.modName, mod.version = name, version
 
-local Grid2DB -- local reference to Grid2's saved-vars db.
+local Grid2 -- local reference to Grid2 for db access
 
 local ge = {
     Healer = "Hiui-Healer",
@@ -31,29 +31,6 @@ local specs = {
 }
 local _, pClass = UnitClass("player")
 local yClass = specs[pClass]
-
-local function getGrid2DB()
-    local function getDbNameForSv(sv)
-        for k, v in pairs(_G) do
-            if v == sv then
-                return k
-            end
-        end
-        return nil
-    end
-
-    local AceDB = LibStub:GetLibrary("AceDB-3.0",true)
-
-    local g2
-        for db in pairs(AceDB.db_registry) do
-            if not db.parent then --db.sv is a ref to the saved vairable name
-            local dbName = getDbNameForSv(db.sv)
-            if dbName == "Grid2DB" then
-                return db
-            end
-        end
-    end
-end
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
@@ -1040,22 +1017,22 @@ local features = {
         Hiui:Print("Grid2's profiles-per-specialization enabled.")
     end,
     init_hiui_profiles = function()
-        local c = Grid2DB:GetCurrentProfile()
-        Grid2DB:SetProfile(ge.Healer)
-        Grid2DB:SetProfile(ge.Tank)
-        Grid2DB:SetProfile(ge.Damager)
+        local c = Grid2.db:GetCurrentProfile()
+        Grid2.db:SetProfile(ge.Healer)
+        Grid2.db:SetProfile(ge.Tank)
+        Grid2.db:SetProfile(ge.Damager)
         --Grid2DB:SetProfile(c)
-        _G["Grid2"]:SetProfileForSpec(c)
+        Grid2:SetProfileForSpec(c)
         Hiui:Print("Initialized Grid2 profiles for Hiui.")
     end,
     set_profile = function(p, s)
         --Hiui:Print("set_profile", p, s, c)
         if p then
             if s then
-                _G["Grid2"]:SetProfileForSpec(p, s)
+                Grid2:SetProfileForSpec(p, s)
                 Hiui:Print("Grid2 profile for spec " .. s .. " set to " .. p .. ".")
             else
-                _G["Grid2"]:SetProfileForSpec(p)
+                Grid2:SetProfileForSpec(p)
                 Hiui:Print("Grid2 profile set to " .. p .. ".")
             end
         end
@@ -1221,7 +1198,7 @@ function mod:OnInitialize()
     Hiui.optionFrames[name] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(name, options.name, parentOptions)
 
     --[[ Module specific on-load routines go here. --]]
-    Grid2DB = getGrid2DB()
+    Grid2 = LibStub("AceAddon-3.0"):GetAddon("Grid2")
 
     --[[ Fix last patch ]]
     if type(char.initialized) == "boolean" then
