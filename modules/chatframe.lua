@@ -4,7 +4,7 @@
 --]]
 --local Hiui = Hiui
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
-local name, version = "Chat Frame Mods", 0.1
+local name, version = "Chat Frame", 0.1
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
 
