@@ -69,7 +69,6 @@ local options = {
             order = 0,
             name = "Enable " .. name,
             desc = "Check to enable this module.",
-			width = "full",
             type = "toggle",
             set = function(info, value)
                 profile.enabled = value
@@ -83,8 +82,16 @@ local options = {
                 return profile.enabled
             end,
         },
-        disabledWarning = {
+        debug = {
             order = 1,
+            name = "Noisy debugging",
+            desc = "Print lots of text to the chatbox.",
+            type = "toggle",
+            set = function(_, value) global.debug = value end,
+            get = function() return global.debug end,
+        },
+        disabledWarning = {
+            order = 2,
             name = "Disabled! None of the options will function until you enable it again.",
             type = "description",
             width = "full",
