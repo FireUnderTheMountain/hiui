@@ -30,6 +30,8 @@ modules\bagsync.lua
 modules\chatframe.lua
 modules\details.lua
 modules\grid2.lua
+modules\minimap.lua
+modules\questframe.lua
 modules\viewport.lua
 
 # init.lua
