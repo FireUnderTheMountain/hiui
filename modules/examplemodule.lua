@@ -4,8 +4,11 @@
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Example Module", 0
-local mod = Hiui:NewModule(name)
+local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
+
+--[[ Imports --]]
+-- local GlobalUIElement = _G["GlobalUIElement"]
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
