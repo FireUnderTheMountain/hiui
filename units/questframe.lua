@@ -54,17 +54,20 @@ function hiui.run.questFrame()
     Do we uhhhhhhh, move these to questhider?
     --]]
     local function bossing()
-        if UnitExists("boss1") then return true end
+        -- if UnitExists("boss1") then return true end
+        return UnitExists("boss1")
     end
 
     local function arenaing()
-        if UnitExists("arena1") then return true end
+        -- if UnitExists("arena1") then return true end
+        return UnitExists("arena1")
     end
 
     local function pvping()
-        if C_PvP.GetActiveMatchState() ~= Enum.PvPMatchState.Inactive then
-            return true
-        end
+        return C_PvP.GetActiveMatchState() ~= Enum.PvPMatchState.Inactive
+        -- if C_PvP.GetActiveMatchState() ~= Enum.PvPMatchState.Inactive then
+        --     return true
+        -- end
     end
 
     --[[    ObjectiveTracker_Collapse() and ObjectiveTracker_Expand()
