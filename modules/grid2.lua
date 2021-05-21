@@ -1187,10 +1187,9 @@ end
 function mod:OnInitialize()
     --[[ data initialization. do not modify. --]]
     self.db = Hiui.db:RegisterNamespace(name, defaults)
-    db = self.db
-    global = db.global
-    profile = db.profile
-    char = db.char
+    global = self.db.global
+    profile = self.db.profile
+    char = self.db.char
 
     --[[ option page initialization. do not modify. --]]
     LibStub("AceConfig-3.0"):RegisterOptionsTable(name, options);
