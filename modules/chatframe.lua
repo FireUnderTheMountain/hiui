@@ -4,36 +4,30 @@
 --]]
 --local Hiui = Hiui
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
-local name, version = "Chat Frame", 0.1
+local name, version = "Chat Frame", 0.5
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
+
+--[[ Imports --]]
+local ChatFrame1 = _G["ChatFrame1"]
+local ChatFrame1Tab = _G["ChatFrame1Tab"]
+local ChatFrame1Background = _G["ChatFrame1Background"]
+local ChatFrame1ButtonFrame = _G["ChatFrame1ButtonFrame"]
+local QuickJoinToastButton = _G["QuickJoinToastButton"]
+local ChatFrameChannelButton = _G["ChatFrameChannelButton"]
+local ChatFrameToggleVoiceDeafenButton = _G["ChatFrameToggleVoiceDeafenButton"]
+local ChatFrameToggleVoiceMuteButton = _G["ChatFrameToggleVoiceMuteButton"]
+local ChatFrameMenuButton = _G["ChatFrameMenuButton"]
+
+local uiWidth = UIParent:GetWidth()
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
     mod.db.global.modules[name]
     mod.db.profile.modules[name]
     mod.db.char.modules[name]
-]]
-local db, global, profile, char
-
-
-local uiWidth = UIParent:GetWidth()
-local MCF = _G["ChatFrame1"]
-
-function mod:PLAYER_REGEN_DISABLED()
-    if profile.shrink_chat_during_combat then
-        MCF:SetWidth(profile.width.ic)
-        MCF.timeVisibleSecs = 10
-    end
-end
-
-function mod:PLAYER_REGEN_ENABLED()
-    if profile.shrink_chat_during_combat then
-        MCF:SetWidth(profile.width.ooc)
-        MCF.timeVisibleSecs = 120
-    end
-end
-
+--]]
+local global, profile, char
 
 --[[    Default Values
     In each module, you can begin editing defaults for this module by using defaults.global|profile|char
@@ -49,14 +43,14 @@ local defaults = {
     profile = {
         enabled = false,
         width = {
-            ooc = uiWidth/4, -- magic number
-            ic = uiWidth*10/54.352, -- magic number
+            ooc = uiWidth*35/100, -- magic number
+            ic = uiWidth*23/100, -- magic number
         },
-        --height = UIParent:GetHeight()*10/36, -- mostly irrelevant.
-        bottomOffset = 32, -- magic number, make user config
-        leftOffset = 32, -- magic number, make user config
+        bottomOffset = 2, -- magic number, make user config
+        leftOffset = 2, -- magic number, make user config
         corner_chat_every_login = false,
-        shrink_chat_during_combat = true,
+        size_chat_for_combat = true,
+        hide_chat_buttons = true,
     },
     char = {
         initialized = 0, -- used for first time load
@@ -69,46 +63,134 @@ local defaults = {
     Remember to set/change db values during these functions.
 --]]
 local features = {
-	sample_function = function(info)
-        char.sample_function_run = true
-        return
-	end,
-    sample_func_two = function(info, value)
-        if value then -- running as "set"
-            char.sample_func_two_run = value
-        else -- running as "get"
-            return char.sample_func_two_run
+    hide_chat_bg = function(_)
+        if global.debug then
+            SetChatWindowColor(1, 0, 100, 0)
+            SetChatWindowAlpha(1, 128)
+        else
+            SetChatWindowColor(1, 0, 0, 0)
+            SetChatWindowAlpha(1, 0)
         end
     end,
-    hide_chat_bg = function(_)
-        SetChatWindowColor(1, 0, 0, 0)
-		SetChatWindowAlpha(1, 0)
-    end,
+
     corner_chat = function(_)
-        MCF:StartMoving()
-        MCF:ClearAllPoints()
-        MCF:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", profile.leftOffset, profile.bottomOffset)
-        MCF:SetWidth(profile.width.ooc)
-        MCF:StopMovingOrSizing()
+        --[[ ChatFrame1Background correction
+        The background goes 6 px below the frame,   interesting.
+        -2 horizontal adjustment is the default blizzard ui.
+        --]]
+        ChatFrame1Background:SetPoint("BOTTOMLEFT", ChatFrame1, "BOTTOMLEFT", 0, -profile.bottomOffset)
+        ChatFrame1Background:SetPoint("BOTTOMRIGHT", ChatFrame1, "BOTTOMRIGHT", 0, -profile.bottomOffset)
+
         if global.debug then
-            local bitt, target, anchor, left, bot = MCF:GetPoint(1)
-            if (not (left or bot)) or (left > (profile.leftOffset + 0.1) or left < (profile.leftOffset - 0.1)) or (bot > (profile.bottomOffset + 0.1) or bot < (profile.bottomOffset - 0.1)) then
+            hooksecurefunc(ChatFrame1Background, "SetPoint", function(self)
+            mod:Print("Uh oh, ChatFrame1Background moved. Report this for hooking!")
+            end)
+        end
+
+
+        --[[ Primary Chat Frame
+        Offsets from WorldFrame may not be correct as WorldFrame isn't affected by UI scaling.
+        --]]
+        ChatFrame1:StartMoving()
+        ChatFrame1:ClearAllPoints()
+        --ChatFrame1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", profile.leftOffset, profile.bottomOffset)
+        ChatFrame1:SetPoint("BOTTOMLEFT", _G["WorldFrame"], "BOTTOMLEFT", profile.leftOffset, profile.bottomOffset)
+        ChatFrame1:SetWidth(profile.width.ooc)
+        ChatFrame1:StopMovingOrSizing()
+
+        ChatFrame1:SetPoint("BOTTOMLEFT", _G["WorldFrame"], "BOTTOMLEFT", profile.leftOffset, profile.bottomOffset)
+
+        if global.debug then
+            local _, _, _, left, bot = ChatFrame1:GetPoint(1)
+            if (not (left or bot)) or
+              left > (profile.leftOffset + 0.1) or
+              left < (profile.leftOffset - 0.1) or
+              bot > (profile.bottomOffset + 0.1) or
+              bot < (profile.bottomOffset - 0.1) then
                 mod:Print("Debug message. Chat frame not cornered. It probably should be!")
-                mod:Print("Debug: " .. (bitt or "No point") .. " to " .. (target and target:GetName() or "no frame") .. " " .. (anchor or "no anchor"))
+                mod:Print(ChatFrame1:GetPoint(1))
+              else
+                mod:Print("Chat is positioned correctly.")
             end
         end
     end,
-    toggle_chat_slimming = function(_, val)
-        if val ~= nil then 
-            profile.shrink_chat_during_combat = val
+
+    size_chat_for_combat = function(combat)
+        if combat == nil then
+            combat = InCombatLockdown()
         end
 
-        if profile.shrink_chat_during_combat then
+        if combat then
+            ChatFrame1:SetWidth(profile.width.ic)
+            ChatFrame1.timeVisibleSecs = 10
         else
+            ChatFrame1:SetWidth(profile.width.ooc)
+            ChatFrame1.timeVisibleSecs = 120
         end
     end,
-}
 
+    hide_chat_buttons = function()
+        local anchor, frame, bitt, offsetX, offsetY = "LEFT", UIParent, "BOTTOMLEFT", 15, 2
+
+
+        --[[ Friends Button & Toast Frames
+        Toast and Toast2 use some kind of smart positioning
+        so they can both be displayed at the same time. I don't know how it works, so I don't know if I broke it.
+        --]]
+        QuickJoinToastButton.Toast:ClearAllPoints()
+        QuickJoinToastButton.Toast:SetParent(ChatFrame1)
+        QuickJoinToastButton.Toast:SetPoint("BOTTOMLEFT", ChatFrame1Tab, "TOPLEFT", 0, 0)
+        QuickJoinToastButton.Toast2:ClearAllPoints()
+        QuickJoinToastButton.Toast2:SetParent(ChatFrame1)
+        QuickJoinToastButton.Toast2:SetPoint("BOTTOM", QuickJoinToastButton.Toast, "TOP")
+
+        local moving
+        hooksecurefunc(QuickJoinToastButton.Toast, "SetPoint", function(self)
+            if moving then return end
+            moving = true
+            QuickJoinToastButton.Toast:ClearAllPoints()
+            self:SetPoint("BOTTOMLEFT", ChatFrame1Tab, "TOPLEFT", 0, 0)
+            moving = false
+        end)
+
+        local moving2
+        hooksecurefunc(QuickJoinToastButton.Toast2, "SetPoint", function(self)
+            if moving2 then return end
+            moving2 = true
+            QuickJoinToastButton.Toast2:ClearAllPoints()
+            self:SetPoint("BOTTOM", QuickJoinToastButton.Toast, "TOP")
+            moving2 = false
+        end)
+
+        QuickJoinToastButton:ClearAllPoints()
+        QuickJoinToastButton:SetPoint("LEFT", ChatFrameMenuButton, "RIGHT")
+
+
+        --[[ ChatFrame1ButtonFrame
+        Orphan the children, keep them in order.
+        --]]
+        ChatFrameChannelButton:ClearAllPoints()
+        ChatFrameChannelButton:SetPoint(anchor, frame, bitt, offsetY, offsetX)
+        --ChatFrameChannelButton:SetSize(26,25)
+
+        -- TODO: change once Enum implemented.
+        ChatFrameToggleVoiceDeafenButton:ClearAllPoints()
+        ChatFrameToggleVoiceDeafenButton:SetPoint("LEFT", ChatFrameChannelButton, "RIGHT")
+        --ChatFrameToggleVoiceDeafenButton:SetSize(26,25)
+
+        ChatFrameToggleVoiceMuteButton:ClearAllPoints()
+        ChatFrameToggleVoiceMuteButton:SetPoint("LEFT", ChatFrameToggleVoiceDeafenButton, "RIGHT")
+        --ChatFrameToggleVoiceMuteButton:SetSize(26,25)
+
+        ChatFrameMenuButton:ClearAllPoints()
+        ChatFrameMenuButton:SetPoint("LEFT", ChatFrameToggleVoiceMuteButton, "RIGHT")
+        --ChatFrameMenuButton:SetSize(29,29)
+
+        ChatFrame1ButtonFrame:ClearAllPoints()
+        ChatFrame1ButtonFrame:Hide()
+        ChatFrame1ButtonFrame:SetSize(0,0)
+    end,
+}
 
 --[[    GUI Options Menu
     Only edit the tables under args. Leave "enable" and "disabledWarning" alone.
@@ -122,7 +204,6 @@ local options = {
             order = 0,
             name = "Enable " .. name,
             desc = "Check to enable this module.",
-			width = "full",
             type = "toggle",
             set = function(info, value)
                 profile.enabled = value
@@ -136,48 +217,76 @@ local options = {
                 return profile.enabled
             end,
         },
-        disabledWarning = {
+        debug = {
             order = 1,
+            name = "Noisy debugging",
+            desc = "Print lots of text to the chatbox.",
+            type = "toggle",
+            set = function(_, value) global.debug = value end,
+            get = function() return global.debug end,
+        },
+        disabledWarning = {
+            order = 2,
             name = "Disabled! None of the options will function until you enable it again.",
             type = "description",
             width = "full",
         },
+        header = {
+            order = 4,
+            name = "Settings",
+            type = "header",
+            width = "half",
+        },
         corner_chat = {
-            order = 2,
+            order = 5,
 			name = "Move Chat To Corner",
-            descStyle = "hidden",
 			type = "execute",
 			func = features.corner_chat,
 		},
-        always_corner_chat = {
-            order = 3,
+        corner_chat_every_login = {
+            order = 6,
             name = "Corner Chat Every Login",
             desc = "Reposition chat window in the corner at every single login. Useful if you move the chat around a lot.",
             type = "toggle",
             set = function(_, val) profile.corner_chat_every_login = val or false end,
             get = function(_) return profile.corner_chat_every_login end,
         },
-        small_chat = {
-            order = 4,
+        size_chat_for_combat = {
+            order = 7,
             name = "Shrink Chat During Combat",
             desc = "Compress the width of the chatframe during combat to keep your screen clean.",
             type = "toggle",
             set = function(_, val)
-                profile.shrink_chat_during_combat = val or false
-                if not val then
-                    MCF:SetWidth(profile.width.ooc)
-                end
+                profile.size_chat_for_combat = val or false
+                features.size_chat_for_combat()
             end,
-            get = function() return profile.shrink_chat_during_combat end,
+            get = function() return profile.size_chat_for_combat end,
         },
-        header = {
-            name = "Profile Settings",
-            type = "header",
-            width = "half",
-            order = 4,
+        hide_chat_buttons = {
+            order = 8,
+            name = "Move Chat Buttons",
+            desc = "",
+            type = "toggle",
+            set = function(_, val)
+                profile.hide_chat_buttons = val or false
+                features.hide_chat_buttons()
+            end,
+            get = function() return profile.hide_chat_buttons end,
         },
     },
 }
+
+function mod:PLAYER_REGEN_DISABLED()
+    if profile.size_chat_for_combat then
+        features.size_chat_for_combat(true)
+    end
+end
+
+function mod:PLAYER_REGEN_ENABLED()
+    if profile.size_chat_for_combat then
+        features.size_chat_for_combat(false)
+    end
+end
 
 --[[    Option Page Show
     Removes the disabled state of each option. Also hides the disabled warning. Do not modify.
@@ -213,6 +322,9 @@ function mod:OnInitialize()
     local parentOptions = tostring(Hiui.optionsName)
     Hiui.optionFrames[name] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(name, options.name, parentOptions)
 
+    --[[ Gray out args. do not modify. --]]
+    if not profile.enabled then disableArgs(options) end
+
     --[[ Module specific on-load routines go here. --]]
 end
 
@@ -221,9 +333,7 @@ function mod:OnEnable()
 
     --[[ First time enablement, run if we've updated this module. --]]
 	if char.initialized < mod.version then
-		for _, feature in pairs(features) do
-			feature()
-		end
+		    features.corner_chat()
 		char.initialized = mod.version
 	end
 
@@ -231,9 +341,10 @@ function mod:OnEnable()
     self:RegisterEvent("PLAYER_REGEN_DISABLED")
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
 
-    if profile.corner_chat_every_login then
-        features.corner_chat()
-    end
+    if profile.corner_chat_every_login then features.corner_chat() end
+    if profile.hide_chat_buttons then features.hide_chat_buttons() end
+
+    -- Chat frame menu button and undock toaste
 end
 
 function mod:OnDisable()
