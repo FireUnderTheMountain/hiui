@@ -54,22 +54,12 @@ local features = {
             self:SetMovable(true)
             self:SetUserPlaced(true)
             self:ClearAllPoints()
-            --self:SetPoint("TOPLEFT", questWrapper)
-            --self:SetPoint("TOPRIGHT", questWrapper)
-            --self:SetParent(questWrapper)
-            --self:SetPoint('TOPRIGHT', UIParent, -45, -200)
-            --self:SetPoint("BOTTOMLEFT", Minimap, "TOPLEFT", -40, 8)
-            --self:SetPoint("BOTTOMRIGHT", Minimap, "TOPRIGHT", 40, 8)
             self:SetPoint("BOTTOM", UIParent, "BOTTOMRIGHT", -140, 255)
-            --[[ This sets otfBlocksFrame.QuestHeader left and right to 1456.66 and 1691.66
-                while minimap left and right is 1466.66 and 1666.66 --]]
-
-            --self:SetPoint("TOP", UIParent, "BOTTOMRIGHT", -140, 255+heightNormal)
-            self:SetHeight(heightNormal)
+            self:SetSize(160, heightNormal)
             self:SetMovable(false)
             moving = nil
 
-            mod:Print("Quest frame position update.")
+            if global.debug then mod:Print("Quest frame position update.") end
         end)
 
         -- otf.HeaderMenu.MinimizeButton:HookScript("OnClick", function()
@@ -137,7 +127,6 @@ local options = {
             order = 0,
             name = "Enable " .. name,
             desc = "Check to enable this module.",
-			width = "full",
             type = "toggle",
             set = function(info, value)
                 profile.enabled = value
@@ -151,8 +140,16 @@ local options = {
                 return profile.enabled
             end,
         },
-        disabledWarning = {
+        debug = {
             order = 1,
+            name = "Noisy debugging",
+            desc = "Print lots of text to the chatbox.",
+            type = "toggle",
+            set = function(_, value) global.debug = value end,
+            get = function() return global.debug end,
+        },
+        disabledWarning = {
+            order = 2,
             name = "Disabled! None of the options will function until you enable it again.",
             type = "description",
             width = "full",
@@ -167,7 +164,7 @@ local options = {
             get = function(_) return profile.position_quest_tracker_on_login end,
         },
         skin_quest_frame = {
-            order = 3,
+            order = 4,
             name = "Skin the quest frame",
             desc = "Use cool Hiui skinning based on Quest Tracker for Modernists! (Requires reload)",
             type = "toggle",
