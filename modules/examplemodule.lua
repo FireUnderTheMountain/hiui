@@ -70,7 +70,7 @@ local options = {
             name = "Enable " .. name,
             desc = "Check to enable this module.",
             type = "toggle",
-            set = function(info, value)
+            set = function(_, value)
                 profile.enabled = value
                 if value then
                     mod:Enable()
@@ -78,9 +78,7 @@ local options = {
                     mod:Disable()
                 end
             end,
-            get = function(info)
-                return profile.enabled
-            end,
+            get = function() return profile.enabled end,
         },
         debug = {
             order = 1,
