@@ -72,7 +72,7 @@ function Hiui:OnInitialize()
 
 	-- Turn profile selection into an options window
 	options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(db)
-	--options.args.profiles.guiHidden = true
+	options.args.profiles.guiHidden = true
 
 	--AceConfig:RegisterOptionsTable(appNameToMake, optionsTable [, slashcmd])
 	LibStub("AceConfig-3.0"):RegisterOptionsTable(optionsName, options)
