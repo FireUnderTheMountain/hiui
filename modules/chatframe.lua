@@ -273,6 +273,30 @@ local options = {
             end,
             get = function() return profile.hide_chat_buttons end,
         },
+        normal_chat_width = {
+            order = 9,
+            name = "Out-of-combat chat width",
+            type = "input",
+            width = "half",
+            set = function(_, value)
+                if global.debug then
+                    mod:Print("New width attempt:", value)
+                end
+
+                local n
+                value = tonumber(value)
+                if not value or value == "" or value < 150 or value > GetScreenWidth()/2 then
+                    mod:Print("Won't accept more than half of screen width, or less than 150.")
+                    n = defaults.profile.width.ooc
+                else
+                    n = value
+                end
+
+                profile.width.ooc = n
+                features.size_chat_for_combat(false)
+            end,
+            get = function() return tostring(profile.width.ooc) end,
+        },
     },
 }
 
