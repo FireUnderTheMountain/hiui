@@ -60,7 +60,7 @@ local features = {
 --[[    GUI Options Menu
     Only edit the tables under args. Leave "enable" and "disabledWarning" alone.
     The name of each option is what you type to enable/disable it, so make them keyboard friendly. Ex. "exampleoption" instead of "example_option"
-]]
+--]]
 local options = {
     name = name .. " Options",
     type = "group",
