@@ -246,7 +246,7 @@ function mod:OnEnable()
         if ver < mod.version and type(features[feature]) == "function" then
             if global.debug then self:Print("Running " .. feature .. " for update.") end
             features[feature]()
-            char.feature = mod.version
+            char[feature] = mod.version
         end
     end
 
