@@ -73,7 +73,8 @@ local features = {
             if global.debug then mod:Print("Hiding Myslot Minimap Button.") end
 
             -- Myslot keeps all their buttons anonymous. The only true way to fix this is iterate through the addon options pages looking for unique information, like the Myslot guy's email address, and get the button relative to there.
-            l:Hide("Myslot")
+            -- Heuristically delay?
+            C_Timer.After(0.5, function() l:Hide("Myslot") end)
         end
 
         local b = _G["LibDBIcon10_BugSack"]
@@ -245,7 +246,7 @@ function mod:OnEnable()
         if ver < mod.version and type(features[feature]) == "function" then
             if global.debug then self:Print("Running " .. feature .. " for update.") end
             features[feature]()
-            ver = mod.version
+            char.feature = mod.version
         end
     end
 
