@@ -34,6 +34,7 @@ modules\minimap.lua
 modules\plater.lua
 modules\questframe.lua
 modules\viewport.lua
+modules\xloot.lua
 
 # init.lua
 #textures.lua
