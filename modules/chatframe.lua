@@ -74,8 +74,23 @@ local features = {
     end,
 
     corner_chat = function(_)
+        --[[ Pre-move debugging --]]
+        if global.debug then
+            local _, _, _, left, bot = ChatFrame1:GetPoint(1)
+            if (not (left or bot)) or
+              left > (profile.leftOffset + 0.1) or
+              left < (profile.leftOffset - 0.1) or
+              bot > (profile.bottomOffset + 0.1) or
+              bot < (profile.bottomOffset - 0.1) then
+                mod:Print("Pre-move debug message. Chat frame not cornered. We will do that!")
+                mod:Print(ChatFrame1:GetPoint(1))
+              else
+                mod:Print("Even before attempting to move it, the chat is positioned correctly.")
+            end
+        end
+
         --[[ ChatFrame1Background correction
-        The background goes 6 px below the frame,   interesting.
+        The background goes 6 px below the frame, interesting.
         -2 horizontal adjustment is the default blizzard ui.
         --]]
         ChatFrame1Background:SetPoint("BOTTOMLEFT", ChatFrame1, "BOTTOMLEFT", 0, -profile.bottomOffset)
@@ -100,6 +115,7 @@ local features = {
 
         ChatFrame1:SetPoint("BOTTOMLEFT", _G["WorldFrame"], "BOTTOMLEFT", profile.leftOffset, profile.bottomOffset)
 
+        --[[ Post-move debugging --]]
         if global.debug then
             local _, _, _, left, bot = ChatFrame1:GetPoint(1)
             if (not (left or bot)) or
@@ -107,7 +123,7 @@ local features = {
               left < (profile.leftOffset - 0.1) or
               bot > (profile.bottomOffset + 0.1) or
               bot < (profile.bottomOffset - 0.1) then
-                mod:Print("Debug message. Chat frame not cornered. It probably should be!")
+                mod:Print("Debug message. Chat frame not cornered. But it should be!")
                 mod:Print(ChatFrame1:GetPoint(1))
               else
                 mod:Print("Chat is positioned correctly.")
