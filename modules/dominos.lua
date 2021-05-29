@@ -3,7 +3,7 @@
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
-local name, version = "Dominos Tweaks", 0.2
+local name, version = "Dominos", 0.2
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
 
@@ -983,7 +983,7 @@ local features = {
     The name of each option is what you type to enable/disable it, so make them keyboard friendly. Ex. "exampleoption" instead of "example_option"
 --]]
 local options = {
-    name = " Dominos",
+    name = " " .. name,
     type = "group",
     args = {
         enable = {

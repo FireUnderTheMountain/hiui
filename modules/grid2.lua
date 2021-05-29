@@ -1059,7 +1059,7 @@ features.auto_set_profiles = function(_)
 end
 
 local options = {
-    name = name .. " Options",
+    name = " " .. name,
     type = "group",
     args = {
         enable = {

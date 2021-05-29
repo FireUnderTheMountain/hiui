@@ -103,7 +103,7 @@ local features = {
     The name of each option is what you type to enable/disable it, so make them keyboard friendly. Ex. "exampleoption" instead of "example_option"
 --]]
 local options = {
-    name = "XLoot",
+    name = " " .. name,
     type = "group",
     args = {
         enable = {
