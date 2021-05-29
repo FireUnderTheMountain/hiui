@@ -14,6 +14,7 @@ local ChatFrame1Tab = _G["ChatFrame1Tab"]
 local ChatFrame1Background = _G["ChatFrame1Background"]
 local ChatFrame1ButtonFrame = _G["ChatFrame1ButtonFrame"]
 local QuickJoinToastButton = _G["QuickJoinToastButton"]
+local BNToastFrame = _G["BNToastFrame"]
 local ChatFrameChannelButton = _G["ChatFrameChannelButton"]
 local ChatFrameToggleVoiceDeafenButton = _G["ChatFrameToggleVoiceDeafenButton"]
 local ChatFrameToggleVoiceMuteButton = _G["ChatFrameToggleVoiceMuteButton"]
@@ -148,35 +149,40 @@ local features = {
     hide_chat_buttons = function()
         local anchor, frame, bitt, offsetX, offsetY = "LEFT", UIParent, "BOTTOMLEFT", 15, 2
 
-
+        
         --[[ Friends Button & Toast Frames
-        Toast and Toast2 use some kind of smart positioning
-        so they can both be displayed at the same time. I don't know how it works, so I don't know if I broke it.
+        Toast and Toast2 are distractions; use BNToastFrame to manipulate the toast.
         --]]
-        QuickJoinToastButton.Toast:ClearAllPoints()
-        QuickJoinToastButton.Toast:SetParent(ChatFrame1)
-        QuickJoinToastButton.Toast:SetPoint("BOTTOMLEFT", ChatFrame1Tab, "TOPLEFT", 0, 0)
-        QuickJoinToastButton.Toast2:ClearAllPoints()
-        QuickJoinToastButton.Toast2:SetParent(ChatFrame1)
-        QuickJoinToastButton.Toast2:SetPoint("BOTTOM", QuickJoinToastButton.Toast, "TOP")
-
-        local moving
-        hooksecurefunc(QuickJoinToastButton.Toast, "SetPoint", function(self)
-            if moving then return end
-            moving = true
-            QuickJoinToastButton.Toast:ClearAllPoints()
-            self:SetPoint("BOTTOMLEFT", ChatFrame1Tab, "TOPLEFT", 0, 0)
-            moving = false
+        local movin
+        hooksecurefunc(QuickJoinToastButton, "SetPoint", function(self)
+            if movin then return end
+            movin = true
+            self:ClearAllPoints()
+            self:SetPoint("LEFT", ChatFrameMenuButton, "RIGHT")
+            movin = false
         end)
 
-        local moving2
-        hooksecurefunc(QuickJoinToastButton.Toast2, "SetPoint", function(self)
-            if moving2 then return end
-            moving2 = true
-            QuickJoinToastButton.Toast2:ClearAllPoints()
-            self:SetPoint("BOTTOM", QuickJoinToastButton.Toast, "TOP")
-            moving2 = false
-        end)
+        -- hooksecurefunc(QuickJoinToastButton, "OnEvent", function(self)
+        --     if movin then return end
+        --     movin = true
+        --     self:ClearAllPoints()
+        --     self:SetPoint("LEFT", ChatFrameMenuButton, "RIGHT")
+        --     movin = false
+        -- end)
+
+        -- QuickJoinToastButton:HookScript("OnShow", function(self)
+        --     if movin then return end
+        --     movin = true
+        --     self:ClearAllPoints()
+        --     self:SetPoint("LEFT", ChatFrameMenuButton, "RIGHT")
+        --     movin = false
+        -- end)
+
+        --[[ Hooking the mysterious BNToastFrame that doesn't seem to exist anymore and doesn't change anything --]]
+        BNToastFrame:HookScript("OnEvent", function(self)
+            self:ClearAllPoints();
+            self:SetPoint("BOTTOMLEFT", ChatFrame1Tab, "TOPLEFT", 0, 1)
+        end);
 
         QuickJoinToastButton:ClearAllPoints()
         QuickJoinToastButton:SetPoint("LEFT", ChatFrameMenuButton, "RIGHT")
