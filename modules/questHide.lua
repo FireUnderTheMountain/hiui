@@ -1,3 +1,0 @@
--- On login...
--- Collapse quest tracker in major city (and show when leaving)
--- Hide quests not in zone.
