@@ -1,7 +1,6 @@
 local Hiui = LibStub("AceAddon-3.0"):NewAddon("hiUI", "AceEvent-3.0", "AceConsole-3.0") -- AceConfigDialog-3.0 not embeddable but used.
 Hiui:SetDefaultModuleState(false) -- Remember to run :Enable() on each module.
-local optionsName = "Hiui Options Table Main Page"
-Hiui.optionsName = optionsName
+local optionsName = "Hiui"
 local db
 
 local defaults = {
@@ -16,7 +15,7 @@ local defaults = {
 --local defaults = Hiui.defaults
 
 local options = {
-	name = "hiUI",
+	name = optionsName,
 	type = "group",
 	args = {
 		debug = {
@@ -87,7 +86,36 @@ function Hiui:OnEnable()
 	for modName, mod in self:IterateModules() do
 		if db.global.debug then self:Print(modName) end
 
-		if mod.db.profile.enabled then mod:Enable() end
+		if mod.db.profile.enabled then -- must be turned on in its own settings
+			if mod.depends then -- and its self-described dependencies must be met
+				if db.global.debug then self:Print("Checking dependencies for " .. modName) end
+
+				if (function()
+					for _, v in ipairs(mod.depends) do
+						if IsAddOnLoadOnDemand(v) then
+							if db.global.debug then self:Print("Loading LOD addon " .. v) end
+							LoadAddOn(v)
+						-- else
+						-- 	if db.global.debug then self:Print(v .. " is not a LOD addon.") end
+						end
+
+						if IsAddOnLoaded(v) then
+							if db.global.debug then self:Print("Addon dependency " .. v .. " loaded successfully.") end
+						else
+							self:Print("Dependency " .. v .. " for module " .. mod.modName .. " couldn't load during Hiui initialization.")
+							return false
+						end
+					end
+
+					if db.global.debug then self:Print("All dependencies satisfied.") end
+					return true
+				end)() then -- all deps are loaded
+					mod:Enable()
+				end
+			else -- no dependencies
+				mod:Enable()
+			end
+		end
 	end
 
 	self.optionFrames.profiles = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(optionsName, tostring(options.args.profiles.name), optionsName, "profiles")
