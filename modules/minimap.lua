@@ -65,7 +65,7 @@ local features = {
                 if _G["Details"].db.profile.Minimap then
                     _G["Details"].db.profile.Minimap.hide = true
                 elseif _G["DetailsOptionsWindowTab11Label3"]:GetText() == "Show Icon: " then
-                    if global.debug then mod:Print("Found details window button, clicking it.")
+                    if global.debug then mod:Print("Found details window button, clicking it.") end
                     _G["DetailsOptionsWindowTab11Widget3"]:Click("LeftButton")
                 else
                     l:Hide("Details")
