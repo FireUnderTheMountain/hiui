@@ -1,11 +1,12 @@
 --[[    Header
-    In this opening block, only the name of the addon and version needs to be changed.
+    In this opening block, only the name of the addon, version, and dependencies needs to be changed.
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Example Module", 0
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
+mod.depends = {}
 
 --[[ Imports --]]
 -- local GlobalUIElement = _G["GlobalUIElement"]
