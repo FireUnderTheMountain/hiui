@@ -1,7 +1,6 @@
 local Hiui = LibStub("AceAddon-3.0"):NewAddon("hiUI", "AceEvent-3.0", "AceConsole-3.0") -- AceConfigDialog-3.0 not embeddable but used.
 Hiui:SetDefaultModuleState(false) -- Remember to run :Enable() on each module.
-local optionsName = "Hiui Options Table Main Page"
-Hiui.optionsName = optionsName
+local optionsName = "Hiui"
 local db
 
 local defaults = {
@@ -16,7 +15,7 @@ local defaults = {
 --local defaults = Hiui.defaults
 
 local options = {
-	name = "hiUI",
+	name = optionsName,
 	type = "group",
 	args = {
 		debug = {

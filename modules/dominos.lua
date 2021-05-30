@@ -1,11 +1,12 @@
 --[[    Header
-    In this opening block, only the name of the addon and version needs to be changed.
+    In this opening block, only the name of the addon, version, and dependencies needs to be changed.
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
-local name, version = "Dominos", 0.2
+local name, version = "Hiui Dominos Profile", 0.2
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
+mod.depends = { "Dominos", "Dominos_Config" }
 
 --[[ Imports --]]
 -- local GlobalUIElement = _G["GlobalUIElement"]
@@ -898,7 +899,7 @@ local defaults = {
 }
 
 
-local function displayUiWarning()
+local function queueUiWarning()
     C_Timer.After(2, function()
         mod:Print("Your dominos frame positions have been updated, but you have to reload your UI to put it into effect.")
     end)
@@ -954,7 +955,7 @@ local features = {
         end
 
         if dontReloadUI then
-            displayUiWarning()
+            queueUiWarning()
         else
             C_UI.Reload()
         end
@@ -971,7 +972,7 @@ local features = {
         end
 
         if dontReloadUI then
-            displayUiWarning()
+            queueUiWarning()
         else
             C_UI.Reload()
         end
@@ -983,7 +984,7 @@ local features = {
     The name of each option is what you type to enable/disable it, so make them keyboard friendly. Ex. "exampleoption" instead of "example_option"
 --]]
 local options = {
-    name = " " .. name,
+    name = " Dominos",
     type = "group",
     args = {
         enable = {
