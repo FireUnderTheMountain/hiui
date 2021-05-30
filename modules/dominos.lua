@@ -1093,7 +1093,7 @@ function mod:OnEnable()
     --[[ Module specific on-run routines go here. --]]
     Dominos = LibStub("AceAddon-3.0"):GetAddon("Dominos")
 
-    if Dominos and profile.initialized < mod.version then
+    if profile.initialized < mod.version then
         features.set_hiui_profile()
         features.reset_dominos_positions(nil, "Don't Reload UI")
         if global.debug then self:Print("Update running, resetting dominos frame positions.") end
