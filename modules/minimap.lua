@@ -57,38 +57,64 @@ local features = {
 			RunSlashCmd("/simc minimap")
 		end
 
-        local d = _G["LibDBIcon10_Details"]
-        if d and d:IsShown() then
-            if global.debug then mod:Print("Hiding Details Minimap Button.") end
+        if IsAddOnLoaded("Details") then
+            local d = _G["LibDBIcon10_Details"]
+            if d and d:IsShown() then
+                if global.debug then mod:Print("Hiding Details Minimap Button.") end
 
-            if _G["DetailsOptionsWindowTab11Label3"]:GetText() == "Show Icon: " then
-                _G["DetailsOptionsWindowTab11Widget3"]:Click("LeftButton")
-            else
-                l:Hide("Details")
+                if _G["Details"].db.profile.Minimap then
+                    _G["Details"].db.profile.Minimap.hide = true
+                elseif _G["DetailsOptionsWindowTab11Label3"]:GetText() == "Show Icon: " then
+                    if global.debug then mod:Print("Found details window button, clicking it.")
+                    _G["DetailsOptionsWindowTab11Widget3"]:Click("LeftButton")
+                else
+                    l:Hide("Details")
+                end
             end
         end
 
         local m = _G["LibDBIcon10_Myslot"]
-        if m and m:IsShown() then
+        if IsAddOnLoaded("Myslot") then
+
+            local MyslotSettings = _G["MyslotSettings"]
+            MyslotSettings = MyslotSettings or {}
+            MyslotSettings.minimap = MyslotSettings.minimap or { hide = true }
+            MyslotSettings.minimap.hide = true
+
             if global.debug then mod:Print("Hiding Myslot Minimap Button.") end
 
-            -- Myslot keeps all their buttons anonymous. The only true way to fix this is iterate through the addon options pages looking for unique information, like the Myslot guy's email address, and get the button relative to there.
-            -- Heuristically delay?
-            C_Timer.After(0.5, function() l:Hide("Myslot") end)
+            l:Hide("Myslot")
         end
 
-        local b = _G["LibDBIcon10_BugSack"]
-        if b and b:IsShown() then
-            if global.debug then mod:Print("Hiding BugSack Minimap Button.") end
+        if IsAddOnLoaded("BugSack") then
+            C_Timer.After(1, function()
+                local b = _G["LibDBIcon10_BugSack"]
+                if b and b:IsShown() then
+                    if global.debug then mod:Print("Hiding BugSack Minimap Button.") end
 
-            local bcb = _G["BugSackCheckMinimap icon"]
-            if bcb then bcb:Click("LeftButton") else l:Hide("BugSack") end
-        end
+                    -- BugSack delays this stuff until player login.
+                    l:Hide("BugSack")
 
-        local p = _G["LibDBIcon10_Plater"]
-        if p and p:IsShown() then
-            if global.debug then mod:Print("Hiding Plater Minimap Button.") end
-            RunSlashCmd("/plater minimap")
+                    -- Hook a more permanent hiding solution
+                    local bsf = _G["BugSack"].frame
+                    bsf:HookScript("OnShow", function()
+                        local bcb = _G["BugSackCheckMinimap icon"]
+                        if not bcb then
+                            if global.debug then mod:Print("Opened bugsack frame but minimap checkbox still isn't present. Need modificiations to hook.") end
+                        else
+                            bcb:Click("LeftButton")
+                        end
+                    end)
+
+                    _G["BugSackLDBIconDB"].hide = true
+                end
+
+                local p = _G["LibDBIcon10_Plater"]
+                if p and p:IsShown() then
+                    if global.debug then mod:Print("Hiding Plater Minimap Button.") end
+                    RunSlashCmd("/plater minimap")
+                end
+            end)
         end
     end,
 
