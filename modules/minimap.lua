@@ -6,6 +6,7 @@ local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Minimap", 0.12
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
+mod.depends = { "BasicMinimap" }
 
 --[[ Imports --]]
 
@@ -96,25 +97,27 @@ local features = {
                     l:Hide("BugSack")
 
                     -- Hook a more permanent hiding solution
-                    local bsf = _G["BugSack"].frame
-                    bsf:HookScript("OnShow", function()
-                        local bcb = _G["BugSackCheckMinimap icon"]
-                        if not bcb then
-                            if global.debug then mod:Print("Opened bugsack frame but minimap checkbox still isn't present. Need modificiations to hook.") end
-                        else
-                            bcb:Click("LeftButton")
-                        end
-                    end)
+                    -- local bsf = _G["BugSack"].frame
+                    -- bsf:HookScript("OnShow", function()
+                    --     local bcb = _G["BugSackCheckMinimap icon"]
+                    --     if not bcb then
+                    --         if global.debug then mod:Print("Opened bugsack frame but minimap checkbox still isn't present. Need modificiations to hook.") end
+                    --     else
+                    --         bcb:Click("LeftButton")
+                    --     end
+                    -- end)
 
-                    _G["BugSackLDBIconDB"].hide = true
-                end
-
-                local p = _G["LibDBIcon10_Plater"]
-                if p and p:IsShown() then
-                    if global.debug then mod:Print("Hiding Plater Minimap Button.") end
-                    RunSlashCmd("/plater minimap")
+                    _G["BugSackLDBIconDB"].hide = true -- this is all we should need.
                 end
             end)
+        end
+
+        if IsAddOnLoaded("Plater") then
+            local p = _G["LibDBIcon10_Plater"]
+            if p and p:IsShown() then
+                if global.debug then mod:Print("Hiding Plater Minimap Button.") end
+                RunSlashCmd("/plater minimap")
+            end
         end
     end,
 

@@ -6,6 +6,7 @@ local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Plater Profile", 0.1
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
+mod.depends = { "Plater" }
 
 --[[ Imports --]]
 -- local GlobalUIElement = _G["GlobalUIElement"]

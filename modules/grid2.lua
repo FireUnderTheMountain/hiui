@@ -6,6 +6,7 @@ local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Grid2", 1.5
 local mod = Hiui:NewModule(name, "AceConsole-3.0")
 mod.modName, mod.version = name, version
+mod.depends = { "Grid2" }
 
 local Grid2 -- local reference to Grid2 for db access
 

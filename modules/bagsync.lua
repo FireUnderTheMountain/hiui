@@ -6,6 +6,7 @@ local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "BagSync", 0.1
 local mod = Hiui:NewModule(name)
 mod.modName, mod.version = name, version
+mod.depends = { "BagSync" }
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
