@@ -41,7 +41,7 @@ local global, profile, char
 mod.anchorTable = {
     direction = "up",
     alignment = "left",
-    visible = true,
+    visible = false,
     scale = 1.0,
     draggable = false,
     x = 0,
