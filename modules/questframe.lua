@@ -76,15 +76,14 @@ local features = {
     skin_quest_frame = function()
         local btnMinimize = otf.HeaderMenu.MinimizeButton
         btnMinimize:SetSize(15, 15)
-        btnMinimize:ClearAllPoints()
-        btnMinimize:SetPoint('TOPRIGHT', otf, 0, -4)
+        --btnMinimize:ClearAllPoints()
+        --btnMinimize:SetPoint('TOPRIGHT', otf, 0, -4)
         btnMinimize:SetNormalTexture('')
         btnMinimize:SetPushedTexture('')
 
         btnMinimize.minus = btnMinimize:CreateFontString(nil, 'OVERLAY')
         btnMinimize.minus:SetFont(STANDARD_TEXT_FONT, 15)
-        btnMinimize.minus:SetText('>')
-        --btnMinimize.minus:SetText' '
+        btnMinimize.minus:SetText('^')
         btnMinimize.minus:SetPoint('CENTER')
         btnMinimize.minus:SetTextColor(1, 1, 1)
         btnMinimize.minus:SetShadowOffset(1, -1)
@@ -92,8 +91,7 @@ local features = {
 
         btnMinimize.plus = btnMinimize:CreateFontString(nil, 'OVERLAY')
         btnMinimize.plus:SetFont(STANDARD_TEXT_FONT, 15)
-        btnMinimize.plus:SetText('<')
-        --btnMinimize.plus:SetText' '
+        btnMinimize.plus:SetText('v')
         btnMinimize.plus:SetPoint('CENTER')
         btnMinimize.plus:SetTextColor(1, 1, 1)
         btnMinimize.plus:SetShadowOffset(1, -1)
@@ -232,8 +230,14 @@ function mod:OnEnable()
 	-- end
 
     --[[ Module specific on-run routines go here. --]]
-    if profile.position_quest_tracker_on_login then features.position_quest_tracker() end
-    if profile.skin_quest_frame then features.skin_quest_frame() end
+    if profile.position_quest_tracker_on_login and not IsAddOnLoaded("Dominos_Quest") and not IsAddOnLoaded("!KalielsTracker") then
+        if global.debug then self:Print("Positioning quest frame.") end
+        features.position_quest_tracker()
+    end
+    if profile.skin_quest_frame and not IsAddOnLoaded("ObjectiveTrackerForModernists") then
+        if global.debug then self:Print("Skining quest frame.") end
+        features.skin_quest_frame()
+    end
 
     -- Hook otf.HeaderMenu.MinimizeButton to collapse height.
 end
