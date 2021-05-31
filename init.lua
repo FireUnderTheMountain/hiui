@@ -4,13 +4,13 @@ local optionsName = "Hiui"
 Hiui.optionsName = optionsName
 local db
 
+Hiui.world_tools_opie_string = "oetohH7 TWzINIq q4Xdswt oy92q32 q4iaEwm ount932 q4N0bwi tem932q 4KBE1q3 230w07U SE070Du se06212 1spell0 B0G0H0H 70F8232 391y4w9 1i430wR eset06A ll06Ins tances9 1i4q4DW 11o4w0Q label06 Reset0y 07SCRIP T070Dsc ript06R esetIns tances0 Y0U0N0y 91y43ww World06 Tools91 34wALT0 AW9144."
+
 local defaults = {
 	global = {
 		debug = false,
 	},
-	profile = {
-		world_tools_opie_string = "oetohH7 TWzINIq q4Xdswt oy92q32 q4iaEwm ount932 q4N0bwi tem932q 4KBE1q3 230w07U SE070Du se06212 1spell0 B0G0H0H 70F8232 391y4w9 1i430wR eset06A ll06Ins tances9 1i4q4DW 11o4w0Q label06 Reset0y 07SCRIP T070Dsc ript06R esetIns tances0 Y0U0N0y 91y43ww World06 Tools91 34wALT0 AW9144.",
-	},
+	profile = {},
 	char = {},
 }
 --local defaults = Hiui.defaults
@@ -35,7 +35,7 @@ local options = {
                 info.option.get()
             end,
             get = function(_)
-                return db.profile.world_tools_opie_string
+                return Hiui.world_tools_opie_string
             end,
 		},
 		-- modules = {
