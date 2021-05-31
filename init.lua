@@ -5,6 +5,7 @@ Hiui.optionsName = optionsName
 local db
 
 Hiui.world_tools_opie_string = "oetohH7 TWzINIq q4Xdswt oy92q32 q4iaEwm ount932 q4N0bwi tem932q 4KBE1q3 230w07U SE070Du se06212 1spell0 B0G0H0H 70F8232 391y4w9 1i430wR eset06A ll06Ins tances9 1i4q4DW 11o4w0Q label06 Reset0y 07SCRIP T070Dsc ript06R esetIns tances0 Y0U0N0y 91y43ww World06 Tools91 34wALT0 AW9144."
+Hiui.garrison_windows_opie_string = "oetohH7 imnlNyS 30qg00C 1o4w0Ql abel06S hadowla nds0y07 SCRIPT0 70Drun0 6ShowGa rrisonL andingP age0YEn um0SGar risonTy pe0STyp e180V18 0F0U91y 430qiPC C1o4w0Q label06 BfA0y07 SCRIPT0 70Drun0 6ShowGa rrisonL andingP age0YEn um0SGar risonTy pe0STyp e188180 F0U91y4 30qy3Ab 1o4w0Ql abel06L egion0y 07SCRIP T070Dru n06Show Garriso nLandin gPage0Y Enum0SG arrison Type0ST ype1871 80F0U91 y430qrx Et1o4w0 Qlabel0 6Draeno r0y07SC RIPT070 Drun06S howGarr isonLan dingPag e0YEnum 0SGarri sonType 0SType1 86180F0 U91y434 wGarris on06Win dows913 4."
 
 local defaults = {
 	global = {
@@ -20,24 +21,32 @@ local options = {
 	type = "group",
 	args = {
 		debug = {
+			order = 0,
 			name = "Print verbose debugging messages.",
 			type = "toggle",
 			get = function(_) return db.global.debug end,
 			set = function(_, val) db.global.debug = val end,
 		},
-		opie_string = {
-			name = "\"World Tools\" oPie Import String",
+		world_tools_opie_string = {
+			order = 1,
+			name = [["World Tools" oPie Import String]],
 			desc = "Paste this string into oPie and bind a key to it for full BagSync functionality. Interface -> AddOns -> oPie -> Custom Rings -> New Ring -> Import Snapshot",
             width = "full",
 			type = "input",
             multiline = 5,
-            set = function(info, value)
-                info.option.get()
-            end,
-            get = function(_)
-                return Hiui.world_tools_opie_string
-            end,
+            set = function(info) info.option.get() end,
+            get = function() return Hiui.world_tools_opie_string end,
 		},
+		garrison_windows_opie_string = {
+			order = 2,
+			name = [["Garrison Windows" oPie Import String]],
+			desc = "Paste this string into oPie and bind a key to it for full BagSync functionality. Interface -> AddOns -> oPie -> Custom Rings -> New Ring -> Import Snapshot",
+			width = "full",
+			type = "input",
+			multiline = 5,
+			set = function(info) info.option.get() end,
+			get = function() return Hiui.garrison_windows_opie_string end,
+		}
 		-- modules = {
 		-- 	name = "Modules",
 		-- 	type = "group",
