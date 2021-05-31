@@ -37,6 +37,16 @@ local detailsY = 0 + 55 + 1 + xlaH
 --]]
 local global, profile, char
 
+
+mod.anchorTable = {
+    direction = "up",
+    alignment = "left",
+    visible = true,
+    scale = 1.0,
+    draggable = false,
+    x = 0,
+    y = 0,
+}
 --[[    Default Values
     You should include at least the following:
     defaults.global.debug = false
@@ -52,15 +62,6 @@ local defaults = {
         enabled = false, -- have root addon enable?
         align_loot_above_minimap = false,
         align_loot_on_details = true,
-        anchorTable = {
-            direction = "up",
-            alignment = "left",
-            visible = true,
-            scale = 1.0,
-            draggable = false,
-            x = 0,
-            y = 0,
-        },
     },
     char = {
         initialized = 0, -- used for first time load
@@ -77,22 +78,22 @@ local features = {
         -- -280, -280 BOTTOMRIGHT
         -- Grow left
         -- 1180, 224
-        profile.anchorTable.alignment = "right"
-        profile.anchorTable.x = minimapX
-        profile.anchorTable.y = minimapY
+        mod.anchorTable.alignment = "right"
+        mod.anchorTable.x = minimapX
+        mod.anchorTable.y = minimapY
 
-        xlm.db.profile.anchor = profile.anchorTable
+        xlm.db.profile.anchor = mod.anchorTable
 
         profile.align_loot_above_minimap = true
         profile.align_loot_on_details = false
     end,
 
     align_loot_on_details = function()
-        profile.anchorTable.alignment = "left"
-        profile.anchorTable.x = detailsX
-        profile.anchorTable.y = detailsY
+        mod.anchorTable.alignment = "left"
+        mod.anchorTable.x = detailsX
+        mod.anchorTable.y = detailsY
 
-        xlm.db.profile.anchor = profile.anchorTable
+        xlm.db.profile.anchor = mod.anchorTable
 
         profile.align_loot_above_minimap = false
         profile.align_loot_on_details = true
