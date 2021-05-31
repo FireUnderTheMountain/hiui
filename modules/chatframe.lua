@@ -64,7 +64,7 @@ local defaults = {
     Remember to set/change db values during these functions.
 --]]
 local features = {
-    hide_chat_bg = function(_)
+    hide_chat_bg = function()
         if global.debug then
             SetChatWindowColor(1, 0, 100, 0)
             SetChatWindowAlpha(1, 128)
@@ -74,15 +74,15 @@ local features = {
         end
     end,
 
-    corner_chat = function(_)
+    corner_chat = function()
         --[[ Pre-move debugging --]]
         if global.debug then
             local _, _, _, left, bot = ChatFrame1:GetPoint(1)
             if (not (left or bot)) or
               left > (profile.leftOffset + 0.1) or
               left < (profile.leftOffset - 0.1) or
-              bot > (profile.bottomOffset + 0.1) or
-              bot < (profile.bottomOffset - 0.1) then
+              bot > (39.5 + 0.1) or
+              bot < (39.5 - 0.1) then
                 mod:Print("Pre-move debug message. Chat frame not cornered. We will do that!")
                 mod:Print(ChatFrame1:GetPoint(1))
               else
@@ -137,19 +137,31 @@ local features = {
             combat = InCombatLockdown()
         end
 
+        --[[ We don't want the chat to grow when quicly coming in and out of combat. So any time we enter combat,  --]]
+        local safeToGrowChatSize = true
+
         if combat then
             ChatFrame1:SetWidth(profile.width.ic)
             ChatFrame1.timeVisibleSecs = 10
+
+            safeToGrowChatSize = false
         else
-            ChatFrame1:SetWidth(profile.width.ooc)
-            ChatFrame1.timeVisibleSecs = 120
+            C_Timer.After(2, function()
+                if not InCombatLockdown() then safeToGrowChatSize = true end
+            end)
+
+            C_Timer.After(3, function()
+                if safeToGrowChatSize and not InCombatLockdown() then
+                    ChatFrame1:SetWidth(profile.width.ooc)
+                    ChatFrame1.timeVisibleSecs = 120
+                end
+            end)
         end
     end,
 
     hide_chat_buttons = function()
         local anchor, frame, bitt, offsetX, offsetY = "LEFT", UIParent, "BOTTOMLEFT", 15, 2
 
-        
         --[[ Friends Button & Toast Frames
         Toast and Toast2 are distractions; use BNToastFrame to manipulate the toast.
         --]]
