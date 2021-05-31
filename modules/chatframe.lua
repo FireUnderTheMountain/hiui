@@ -21,6 +21,7 @@ local ChatFrameToggleVoiceMuteButton = _G["ChatFrameToggleVoiceMuteButton"]
 local ChatFrameMenuButton = _G["ChatFrameMenuButton"]
 
 local uiWidth = UIParent:GetWidth()
+local leftCombat = 0 -- A timer to prevent the chat from returning to OOC state too quickly
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
@@ -137,25 +138,23 @@ local features = {
             combat = InCombatLockdown()
         end
 
-        --[[ We don't want the chat to grow when quicly coming in and out of combat. So any time we enter combat,  --]]
-        local safeToGrowChatSize = true
-
         if combat then
             ChatFrame1:SetWidth(profile.width.ic)
             ChatFrame1.timeVisibleSecs = 10
-
-            safeToGrowChatSize = false
         else
-            C_Timer.After(2, function()
-                if not InCombatLockdown() then safeToGrowChatSize = true end
-            end)
+            leftCombat = time()
+            if global.debug then mod:Print("Setting 3 second timer for leaving combat: " .. leftCombat) end
 
-            C_Timer.After(3, function()
-                if safeToGrowChatSize and not InCombatLockdown() then
+            C_Timer.After(3.1, function()
+                local cTime = time()
+                if cTime - leftCombat > 2.9 and not InCombatLockdown() then
+                    if global.debug then mod:Print("Successfully reset chat width.") end
                     ChatFrame1:SetWidth(profile.width.ooc)
                     ChatFrame1.timeVisibleSecs = 120
-                end
-            end)
+                else
+                    if global.debug then mod:Print("Not resetting chat frame width due to combat or timer. Timers: " .. cTime .. ", " .. leftCombat) end
+                end -- if this fails, its because we left [a second] combat recently, so leftCombat is too big.
+            end)    -- but that also means there's a second After() running that will clean up later.
         end
     end,
 
