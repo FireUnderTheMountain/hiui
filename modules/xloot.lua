@@ -39,7 +39,7 @@ local detailsY = 0 + 55 + 1 + xlaH
 local global, profile, char
 
 
-mod.anchorTable = {
+local anchorTable = {
     direction = "up",
     alignment = "left",
     visible = false,
@@ -76,25 +76,34 @@ local defaults = {
 --]]
 local features = {
     align_loot_above_minimap = function()
-        -- -280, -280 BOTTOMRIGHT
-        -- Grow left
-        -- 1180, 224
-        mod.anchorTable.alignment = "right"
-        mod.anchorTable.x = minimapX
-        mod.anchorTable.y = minimapY
+        local m = mod.db.parent:GetCurrentProfile()
+        if xl.db:GetCurrentProfile() ~= m then
+            mod:Print("XLoot is set to a personal profile. Please open XLoot options and set your profile to \"" .. m .. "\".")
+            return
+        end
 
-        xlm.db.profile.anchor = mod.anchorTable
+        anchorTable.alignment = "right"
+        anchorTable.x = minimapX
+        anchorTable.y = minimapY
+
+        xlm.db.profile.anchor = anchorTable
 
         profile.align_loot_above_minimap = true
         profile.align_loot_on_details = false
     end,
 
     align_loot_on_details = function()
-        mod.anchorTable.alignment = "left"
-        mod.anchorTable.x = detailsX
-        mod.anchorTable.y = detailsY
+        local m = mod.db.parent:GetCurrentProfile()
+        if xl.db:GetCurrentProfile() ~= m then
+            mod:Print("XLoot is set to a personal profile. Please open XLoot options and set your profile to \"" .. m .. "\".")
+            return
+        end
 
-        xlm.db.profile.anchor = mod.anchorTable
+        anchorTable.alignment = "left"
+        anchorTable.x = detailsX
+        anchorTable.y = detailsY
+
+        xlm.db.profile.anchor = anchorTable
 
         profile.align_loot_above_minimap = false
         profile.align_loot_on_details = true

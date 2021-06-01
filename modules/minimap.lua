@@ -6,11 +6,10 @@ local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Minimap", 0.12
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
-mod.info = "Minimap positioning and BasicMinimap customizations."
+mod.info = "Minimap button hiding and BasicMinimap positioning and customizations."
 mod.depends = { "BasicMinimap" }
 
 --[[ Imports --]]
-
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
@@ -50,33 +49,37 @@ local features = {
     clean_misc_minimap_icons = function()
         local l = LibStub("LibDBIcon-1.0")
 
-        local sc = _G["LibDBIcon10_SimulationCraft"]
-        if sc and sc:IsShown() then
-            if global.debug then mod:Print("Hiding Simcraft Minimap Button.") end
+        if IsAddOnLoaded("SimulationCraft") then
+            local sc = _G["LibDBIcon10_SimulationCraft"]
+            if sc and sc:IsShown() then
+                if global.debug then mod:Print("Hiding Simcraft Minimap Button.") end
 
-			--DEFAULT_CHAT_FRAME.editBox:SetText("/simc minimap")
-			--ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
-			RunSlashCmd("/simc minimap")
-		end
+                --DEFAULT_CHAT_FRAME.editBox:SetText("/simc minimap")
+                --ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+                RunSlashCmd("/simc minimap")
+            end
+        end
 
         if IsAddOnLoaded("Details") then
             local d = _G["LibDBIcon10_Details"]
             if d and d:IsShown() then
                 if global.debug then mod:Print("Hiding Details Minimap Button.") end
 
-                if _G["Details"].db.profile.Minimap then
-                    _G["Details"].db.profile.Minimap.hide = true
-                elseif _G["DetailsOptionsWindowTab11Label3"]:GetText() == "Show Icon: " then
+                if _G.Details.db.profile.Minimap then
+                    if global.debug then mod:Print("Hiding details minimap button by changing LDBI .hide variable.") end
+                    _G.Details.db.profile.Minimap.hide = true
+                elseif _G.DetailsOptionsWindowTab11Label3:GetText() == "Show Icon: " then
                     if global.debug then mod:Print("Found details window button, clicking it.") end
-                    _G["DetailsOptionsWindowTab11Widget3"]:Click("LeftButton")
+                    _G.DetailsOptionsWindowTab11Widget3:Click("LeftButton")
                 else
+                    if global.debug then mod:Print("Hiding details minimap button as a temporary measure.") end
                     l:Hide("Details")
                 end
             end
         end
 
-        local m = _G["LibDBIcon10_Myslot"]
         if IsAddOnLoaded("Myslot") then
+            local m = _G["LibDBIcon10_Myslot"]
 
             local MyslotSettings = _G["MyslotSettings"]
             MyslotSettings = MyslotSettings or {}
@@ -89,12 +92,12 @@ local features = {
         end
 
         if IsAddOnLoaded("BugSack") then
-            C_Timer.After(1, function()
+            C_Timer.After(1, function() -- BugSack delays this stuff until player login.
                 local b = _G["LibDBIcon10_BugSack"]
                 if b and b:IsShown() then
                     if global.debug then mod:Print("Hiding BugSack Minimap Button.") end
 
-                    -- BugSack delays this stuff until player login.
+                    _G["BugSackLDBIconDB"].hide = true -- this is all we should need.
                     l:Hide("BugSack")
 
                     -- Hook a more permanent hiding solution
@@ -103,12 +106,10 @@ local features = {
                     --     local bcb = _G["BugSackCheckMinimap icon"]
                     --     if not bcb then
                     --         if global.debug then mod:Print("Opened bugsack frame but minimap checkbox still isn't present. Need modificiations to hook.") end
-                    --     else
+                    --     elseif bcb:GetChecked() then
                     --         bcb:Click("LeftButton")
                     --     end
                     -- end)
-
-                    _G["BugSackLDBIconDB"].hide = true -- this is all we should need.
                 end
             end)
         end
@@ -126,7 +127,11 @@ local features = {
         local bm = _G["BasicMinimap"]
 
         if bm then
-            -- TODO: Check profile is not hiui, set it.
+            if bm.db:GetCurrentProfile() ~= mod.db.parent:GetCurrentProfile() then
+                mod:Print("Hiui only operates on addons that use the same profile as it. Please type /bm and set your BasicMinimap profile to \"" .. mod.db.parent:GetCurrentProfile() .. "\".")
+                return
+            end
+
             local m = _G["Minimap"]
 
             local desired = {
@@ -145,7 +150,7 @@ local features = {
             Make it movable, set its position, then lock it.
             --]]
             bm.db.profile.lock = false
-            bm.SetMovable(m, true) -- this is truly a bizarre way to do this, but the Minimap.SetMovable func points to one address, and all other .SetMovable's point to a different, shared address. Big sus.
+            bm.SetMovable(m, true) -- this is truly a bizarre way to do this: the Minimap.SetMovable func points to one address, and all other .SetMovable's point to a different, shared address. Big sus.
             m:StartMoving()
 
             bm.db.profile.position = {

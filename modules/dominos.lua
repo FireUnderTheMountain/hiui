@@ -3,7 +3,7 @@
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
-local name, version = "Hiui Dominos Profile", 0.2
+local name, version = "Hiui Dominos Tweaks", 0.2
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
 mod.info = "General interface positioning using Dominos."
@@ -920,27 +920,16 @@ end
     Remember to set/change db values during these functions.
 --]]
 local features = {
-    set_hiui_profile = function(profile)
-        profile = profile or "Hiui"
+    set_hiui_profile = function(p)
+        p = mod.db.parent:GetCurrentProfile() or p or "Hiui"
 
-        local p = Dominos.db:GetCurrentProfile()
-        if not p then
-            mod:Print("Dominos profile could not be found.")
-            return
-        end
-
-        if p ~= profile then
-            if global.debug then mod:Print("Dominos profile isn't " .. profile .. ", changing that.") end
-            Dominos.db:SetProfile(profile)
+        if Dominos.db:GetCurrentProfile() ~= p then
+            if global.debug then mod:Print("Dominos profile isn't " .. p .. ", changing that.") end
+            Dominos.db:SetProfile(p)
         end
     end,
 
 	save_dominos_positions = function(info)
-        if not Dominos then
-            mod:Print("Dominos structure is not loaded, cannot save position. Seems like a bug.")
-            return
-        end
-
         profile.frames = {}
         for k, v in pairs(Dominos.db.profile) do
             profile[k] = v
@@ -948,19 +937,21 @@ local features = {
 	end,
 
     restore_dominos_positions = function(_, dontReloadUI)
-        if not Dominos then
-            mod:Print("Dominos is not loaded, cannot restore position into it. Safely aborting.")
-            return
-        end
+		if Dominos.db:GetCurrentProfile() ~= mod.db.parent:GetCurrentProfile() then
+			mod:Print("Please set Dominos profile to the same as the Hiui profile. We won't apply any changes to protect your other bar layouts.")
+			return
+		end
 
 		local s = next(profile.storage) and profile.storage or mod.storage
+
 		if global.debug then
 			if s == profile.storage then
-				mod:Print("Chose profile storage to restore dominos frames from.")
+				mod:Print("Selected profile to restore dominos frames from.")
 			else
-				mod:Print("Chose default storage to restore dominos frames from.")
+				mod:Print("Selected defaults to restore dominos frames from.")
 			end
 		end
+
         for k, v in pairs(s) do
             Dominos.db.profile[k] = v
         end
@@ -972,11 +963,11 @@ local features = {
         end
     end,
 
-    reset_dominos_positions = function(_, dontReloadUI)
-        if not Dominos then
-            mod:Print("Dominos is not loaded, cannot restore position into it. Safely aborting.")
-            return
-        end
+    reset_dominos_positions_to_default = function(_, dontReloadUI)
+		if Dominos.db:GetCurrentProfile() ~= mod.db.parent:GetCurrentProfile() then
+			mod:Print("Please set Dominos profile to the same as the Hiui profile. We won't apply any changes to protect your other bar layouts.")
+			return
+		end
 
         for k, v in pairs(mod.storage) do
             Dominos.db.profile[k] = v
@@ -1040,12 +1031,12 @@ local options = {
             confirm = true,
             func = features.restore_dominos_positions,
         },
-        reset_dominos_positions = {
+        reset_dominos_positions_to_default = {
             name = "Reset Dominos Frames Positions",
             desc = "This will reset positions to hiui default and reload the UI!",
             type = "execute",
             confirm = true,
-            func = features.reset_dominos_positions,
+            func = features.reset_dominos_positions_to_default,
         },
     },
 }
@@ -1110,9 +1101,9 @@ function mod:OnEnable()
 	end
 
     if profile.initialized < mod.version then
-		if Dominos.db:GetCurrentProfile() == "Hiui" then
+		if Dominos.db:GetCurrentProfile() == mod.db.parent:GetCurrentProfile() then
 			if global.debug then self:Print("Update running, resetting dominos frame positions.") end
-			features.reset_dominos_positions(nil, "Don't Reload UI")
+			features.reset_dominos_positions_to_default(nil, "Provide Warning for UI Reload")
 		end
         profile.initialized = mod.version
     end
