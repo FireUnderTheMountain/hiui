@@ -98,21 +98,17 @@ function Hiui:OnEnable()
 				if (function()
 					for _, v in ipairs(mod.depends) do
 						if IsAddOnLoadOnDemand(v) then
-							if db.global.debug then self:Print("Loading LOD addon " .. v) end
-							LoadAddOn(v)
-						-- else
-						-- 	if db.global.debug then self:Print(v .. " is not a LOD addon.") end
-						end
-
-						if IsAddOnLoaded(v) then
+							--if db.global.debug then self:Print("Loading LOD addon " .. v) end
+							--LoadAddOn(v) -- modules can handle their own LOD needs.
+						elseif IsAddOnLoaded(v) then
 							if db.global.debug then self:Print("Addon dependency " .. v .. " loaded successfully.") end
 						else
-							self:Print("Dependency " .. v .. " for module " .. mod.modName .. " couldn't load during Hiui initialization.")
+							self:Print("Dependency " .. v .. " for module " .. mod.modName .. " couldn't load during initialization.")
 							return false
 						end
 					end
 
-					if db.global.debug then self:Print("All dependencies satisfied.") end
+					if db.global.debug then self:Print("All dependencies satisfied for " .. mod.modName) end
 					return true
 				end)() then -- all deps are loaded
 					mod:Enable()
