@@ -3,8 +3,9 @@
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
-local name, version = "Quest Log", 0
+local name, version = "Quest Tracker", 0
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
+mod.info = "Quest tracker skinning and positioning."
 mod.modName, mod.version = name, version
 
 local otf = _G["ObjectiveTrackerFrame"]

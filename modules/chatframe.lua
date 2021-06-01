@@ -7,6 +7,7 @@ local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Chat Frame", 0.5
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
+mod.info = "Chat frame modifications - in-combat chat shrinking, primary chat frame purification, moving the chat frame to the corner of the screen, etc."
 
 --[[ Imports --]]
 local ChatFrame1 = _G["ChatFrame1"]
@@ -48,8 +49,8 @@ local defaults = {
             ooc = uiWidth*35/100, -- magic number
             ic = uiWidth*23/100, -- magic number
         },
-        bottomOffset = 2, -- magic number, make user config
-        leftOffset = 2, -- magic number, make user config
+        bottomOffset = 6, -- magic number, make user config
+        leftOffset = 6, -- magic number, make user config
         corner_chat_every_login = false,
         size_chat_for_combat = true,
         hide_chat_buttons = true,
@@ -147,19 +148,19 @@ local features = {
 
             C_Timer.After(3.1, function()
                 local cTime = time()
-                if cTime - leftCombat > 2.9 and not InCombatLockdown() then
+                if cTime - leftCombat >= 3 and not InCombatLockdown() then
                     if global.debug then mod:Print("Successfully reset chat width.") end
                     ChatFrame1:SetWidth(profile.width.ooc)
                     ChatFrame1.timeVisibleSecs = 120
-                else
-                    if global.debug then mod:Print("Not resetting chat frame width due to combat or timer. Timers: " .. cTime .. ", " .. leftCombat) end
+                elseif global.debug then
+                    mod:Print("Not resetting chat frame width due to combat or timer. Timers: " .. cTime .. ", " .. leftCombat)
                 end -- if this fails, its because we left [a second] combat recently, so leftCombat is too big.
             end)    -- but that also means there's a second After() running that will clean up later.
         end
     end,
 
     hide_chat_buttons = function()
-        local anchor, frame, bitt, offsetX, offsetY = "LEFT", UIParent, "BOTTOMLEFT", 15, 2
+        local anchor, frame, bitt, offsetX, offsetY = "LEFT", UIParent, "BOTTOMLEFT", 17, 2
 
         --[[ Friends Button & Toast Frames
         Toast and Toast2 are distractions; use BNToastFrame to manipulate the toast.
@@ -172,22 +173,6 @@ local features = {
             self:SetPoint("LEFT", ChatFrameMenuButton, "RIGHT")
             movin = false
         end)
-
-        -- hooksecurefunc(QuickJoinToastButton, "OnEvent", function(self)
-        --     if movin then return end
-        --     movin = true
-        --     self:ClearAllPoints()
-        --     self:SetPoint("LEFT", ChatFrameMenuButton, "RIGHT")
-        --     movin = false
-        -- end)
-
-        -- QuickJoinToastButton:HookScript("OnShow", function(self)
-        --     if movin then return end
-        --     movin = true
-        --     self:ClearAllPoints()
-        --     self:SetPoint("LEFT", ChatFrameMenuButton, "RIGHT")
-        --     movin = false
-        -- end)
 
         --[[ Hooking the mysterious BNToastFrame that doesn't seem to exist anymore and doesn't change anything --]]
         BNToastFrame:HookScript("OnEvent", function(self)
@@ -222,6 +207,10 @@ local features = {
         ChatFrame1ButtonFrame:ClearAllPoints()
         ChatFrame1ButtonFrame:Hide()
         ChatFrame1ButtonFrame:SetSize(0,0)
+        --ChatFrame1ButtonFrame:UnregisterAllEvents()
+        ChatFrame1ButtonFrame:SetScript("OnEvent", function(self, event)
+            if global.debug then mod:Print("Chat Button Frame on event!") mod:Print(self, event) end
+        end)
     end,
 }
 

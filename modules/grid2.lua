@@ -6,6 +6,7 @@ local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Grid2", 1.5
 local mod = Hiui:NewModule(name, "AceConsole-3.0")
 mod.modName, mod.version = name, version
+mod.info = "Three Grid2 profiles, or each role."
 mod.depends = { "Grid2" }
 
 local Grid2 -- local reference to Grid2 for db access
@@ -1040,19 +1041,19 @@ local features = {
     end,
     hide_minimap_icon = function(_)
         RunSlashCmd("/grid2 minimapicon hide")
-        mod:Print("Grid2 minimap icon hidden.")
+        if global.debug then mod:Print("Grid2 minimap icon hidden.") end
     end,
     toggle_always_apply_profiles = function(_, val)
         profile.always_apply_profiles = val
         return val
     end,
 }
-features.auto_set_profiles = function(_)
+features.auto_set_profiles = function()
     for s=1,4 do
         local p = yClass[s]
         if p then
             features.set_profile(p, s)
-        else
+        elseif global.debug then
             mod:Print("Skipped setting profile for spec " .. s .. " because no profile assigned for it..")
         end
     end

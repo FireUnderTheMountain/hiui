@@ -6,6 +6,7 @@ local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Hiui Dominos Profile", 0.2
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
+mod.info = "General interface positioning using Dominos."
 mod.depends = { "Dominos", "Dominos_Config" }
 
 --[[ Imports --]]

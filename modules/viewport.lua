@@ -5,6 +5,7 @@
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Viewport", 0.1
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
+mod.info = "Custom viewport resolution."
 mod.modName, mod.version = name, version
 
 local UIParent = _G["UIParent"]

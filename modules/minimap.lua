@@ -6,6 +6,7 @@ local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Minimap", 0.12
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
+mod.info = "Minimap positioning and BasicMinimap customizations."
 mod.depends = { "BasicMinimap" }
 
 --[[ Imports --]]

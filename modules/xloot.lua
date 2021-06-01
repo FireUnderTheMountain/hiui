@@ -6,6 +6,7 @@ local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "XLoot Positioning", 0.1
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
+mod.info = "XLoot temporary loot display to free your chat log from spam."
 mod.depends = { "XLoot", "XLoot_Monitor" }
 
 --[[ Imports --]]

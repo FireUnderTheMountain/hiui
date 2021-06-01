@@ -47,12 +47,6 @@ local options = {
 			set = function(info) info.option.get() end,
 			get = function() return Hiui.garrison_windows_opie_string end,
 		}
-		-- modules = {
-		-- 	name = "Modules",
-		-- 	type = "group",
-		-- 	guiHidden = true,
-		-- 	args = {},
-		-- },
 	},
 }
 
@@ -93,6 +87,7 @@ function Hiui:OnInitialize()
 end
 
 function Hiui:OnEnable()
+	local i = 20
 	for modName, mod in self:IterateModules() do
 		if db.global.debug then self:Print(modName) end
 
@@ -125,6 +120,24 @@ function Hiui:OnEnable()
 			else -- no dependencies
 				mod:Enable()
 			end
+		end
+
+		--[[ Create new option entries using mod.name and mod:Info() --]]
+		if mod.name then
+			i = i+1
+			options.args[mod.name] = {
+				order = i,
+				type = "header",
+				width = "full",
+				name = (mod.modName or "No name THIS IS A BUG") .. " " .. (mod.version or "No version THIS IS A BUG"),
+			}
+			i = i+1
+			options.args[mod.name .. "desc"] = {
+				order = i,
+				type = "description",
+				width = "full",
+				name = mod.info or "",
+			}
 		end
 	end
 

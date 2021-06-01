@@ -1,11 +1,14 @@
 --[[    Header
-    In this opening block, only the name of the addon, version, and dependencies needs to be changed.
+    In this opening block, only the name of the addon, version, info and dependencies needs to be changed.
+    Dependencies are mod names that you require to be enabled for this mod to load. You should use the folder name exactly.
+    Module information will be displayed on the main hiui page.
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Example Module", 0
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
+mod.info = "Module information."
 mod.depends = {}
 
 --[[ Imports --]]
@@ -137,9 +140,7 @@ end
 function mod:OnInitialize()
     --[[ data initialization. do not modify. --]]
     self.db = Hiui.db:RegisterNamespace(name, defaults)
-    global = self.db.global
-    profile = self.db.profile
-    char = self.db.char
+    global, profile, char = self.db.global, self.db.profile, self.db.char
 
     --[[ option page initialization. do not modify. --]]
     LibStub("AceConfig-3.0"):RegisterOptionsTable(name, options);

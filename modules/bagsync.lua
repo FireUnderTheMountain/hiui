@@ -6,6 +6,7 @@ local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "BagSync", 0.1
 local mod = Hiui:NewModule(name)
 mod.modName, mod.version = name, version
+mod.info = "An oPie string to gain easy access to all of BagSync's features, such as searching."
 mod.depends = { "BagSync" }
 
 --[[    Database Access

@@ -5,6 +5,7 @@
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Account-wide Interface Options & Tracking", 1
 local mod = Hiui:NewModule(name, "AceConsole-3.0")
+mod.info = "Share per-character interface options among all your characters! Automatically apply the same minimap tracking to all your characters."
 mod.modName, mod.version = name, version
 
 local options
