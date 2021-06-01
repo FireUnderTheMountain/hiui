@@ -8,10 +8,10 @@ local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.info = "Quest tracker skinning and positioning."
 mod.modName, mod.version = name, version
 
+--[[ Imports --]]
 local otf = _G["ObjectiveTrackerFrame"]
---local Minimap = _G["Minimap"]
 local STANDARD_TEXT_FONT = _G["STANDARD_TEXT_FONT"]
-local heightNormal, heightCollapsed = 521, 25
+local heightNormal, heightCollapsed = 521, 25 -- used when not using Dominos_Quest
 local moving
 
 --[[    Database Access
@@ -34,7 +34,7 @@ local defaults = {
     },
     profile = {
         enabled = false, -- have root addon enable?
-        position_quest_tracker_on_login = true,
+        position_quest_tracker_on_login = false,
         skin_quest_frame = true,
     },
     char = {
@@ -102,8 +102,18 @@ local features = {
         btnMinimize:HookScript('OnEnter', function() btnMinimize.minus:SetTextColor(.7, .5, 0) btnMinimize.plus:SetTextColor(.7, .5, 0) end)
         btnMinimize:HookScript('OnLeave', function() btnMinimize.minus:SetTextColor(1, 1, 1) btnMinimize.plus:SetTextColor(1, 1, 1) end)
 
-        hooksecurefunc('ObjectiveTracker_Collapse', function() btnMinimize.plus:Show() btnMinimize.minus:Hide() end)
-        hooksecurefunc('ObjectiveTracker_Expand',   function() btnMinimize.plus:Hide() btnMinimize.minus:Show() end)
+        hooksecurefunc('ObjectiveTracker_Collapse', function()
+            btnMinimize.plus:Show()
+            btnMinimize.minus:Hide()
+            btnMinimize:SetNormalTexture('')
+            btnMinimize:SetPushedTexture('')
+        end)
+        hooksecurefunc('ObjectiveTracker_Expand', function()
+            btnMinimize.plus:Hide()
+            btnMinimize.minus:Show()
+            btnMinimize:SetNormalTexture('')
+            btnMinimize:SetPushedTexture('')
+        end)
 
         -- local title = otf.HeaderMenu.Title
         -- title:SetFont([[Fonts\skurri.ttf]], 13)
@@ -235,7 +245,7 @@ function mod:OnEnable()
         if global.debug then self:Print("Positioning quest frame.") end
         features.position_quest_tracker()
     end
-    if profile.skin_quest_frame and not IsAddOnLoaded("ObjectiveTrackerForModernists") then
+    if profile.skin_quest_frame and not IsAddOnLoaded("ObjectiveTrackerForModernists") and not IsAddOnLoaded("!KalielsTracker") then
         if global.debug then self:Print("Skining quest frame.") end
         features.skin_quest_frame()
     end
