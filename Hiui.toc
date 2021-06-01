@@ -30,6 +30,7 @@ modules\bagsync.lua
 modules\chatframe.lua
 modules\details.lua
 modules\dominos.lua
+modules\extraquestbutton.lua
 modules\grid2.lua
 modules\minimap.lua
 modules\plater.lua
