@@ -1,8 +1,8 @@
 --[[    Header
-    In this opening block, only the name of the addon, version, info and dependencies needs to be changed.
-    Dependencies are mod names that you require to be enabled for this mod to load. You should use the folder name exactly.
-    Module information will be displayed on the main hiui page.
-    The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
+In this opening block, only the name of the addon, version, info and dependencies needs to be changed.
+Dependencies are mod names that you require to be enabled for this mod to load. You should use the folder name exactly.
+Module information will be displayed on the main hiui page.
+The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
 local name, version = "Example Module", 0
@@ -15,18 +15,16 @@ mod.depends = {}
 -- local GlobalUIElement = _G["GlobalUIElement"]
 
 --[[    Database Access
-    Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
-    mod.db.global
-    mod.db.profile
-    mod.db.char
+Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
+mod.db.global, mod.db.profile, mod.db.char
 --]]
 local global, profile, char
 
 --[[    Default Values
-    You should include at least the following:
-    defaults.global.debug = false
-    defaults.profile.enabled = false
-    defaults.char.initialized = false
+You should include at least the following:
+defaults.global.debug = false
+defaults.profile.enabled = false
+defaults.char.initialized = false
 --]]
 local defaults = {
     global = {
@@ -44,8 +42,8 @@ local defaults = {
 
 
 --[[    "Features" local variable
-    Define all your custom functions that are used by the UI in here. This makes them available to run at once during initialization.
-    Remember to set/change db values during these functions.
+Define all your custom functions that are used by the UI in here. This makes them available to run at once during initialization.
+Remember to set/change db values during these functions.
 --]]
 local features = {
 	sample_function = function(info)
@@ -62,8 +60,8 @@ local features = {
 }
 
 --[[    GUI Options Menu
-    Only edit the tables under args. Leave "enable" and "disabledWarning" alone.
-    The name of each option is what you type to enable/disable it, so make them keyboard friendly. Ex. "exampleoption" instead of "example_option"
+Only edit the tables under args. Leave "enable" and "disabledWarning" alone.
+The name of each option is what you type to enable/disable it, so make them keyboard friendly. Ex. "exampleoption" instead of "example_option"
 --]]
 local options = {
     name = " " .. name,
@@ -116,7 +114,7 @@ local options = {
 }
 
 --[[    Option Page Show
-    Removes the disabled state of each option. Also hides the disabled warning. Do not modify.
+Removes the disabled state of each option. Also hides the disabled warning. Do not modify.
 --]]
 local function enableArgs(optionsTable)
     for k, v in pairs(optionsTable.args) do
@@ -126,7 +124,7 @@ local function enableArgs(optionsTable)
 end
 
 --[[    Option Page Hide
-    Grays out the options when you disable the addon. Also hides the disabled warning. Do not modify.
+Grays out the options when you disable the addon. Also hides the disabled warning. Do not modify.
 --]]
 local function disableArgs(optionsTable)
     for k, v in pairs(optionsTable.args) do
