@@ -51,9 +51,17 @@ local features = {
         RunSlashCmd("/eqb lock")
         ExtraQuestButtonAnchor:StartMoving()
         ExtraQuestButtonAnchor:ClearAllPoints()
-        ExtraQuestButtonAnchor:SetPoint("BOTTOM", DominosFrameextra, "TOP")
+
+        if DominosFrameextra then
+            ExtraQuestButtonAnchor:SetPoint("TOP", DominosFrameextra, "BOTTOM")
+        else
+            -- Best Guess It MAGIC NUMBER
+            ExtraQuestButtonAnchor:SetPoint("BOTTOM", UIParent, "BOTTOM", _G.UIParent:GetWidth()*3/4, _G.UIParent:GetHeight()/3)
+        end
+
         ExtraQuestButtonAnchor:StopMovingOrSizing()
         RunSlashCmd("/eqb lock")
+
     	if global.debug then mod:Print("Moved extra quest button anchor.") end
 	end,
 
