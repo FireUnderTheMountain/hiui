@@ -35,6 +35,7 @@ modules\grid2.lua
 modules\minimap.lua
 modules\plater.lua
 modules\questframe.lua
+modules\questhide.lua
 modules\viewport.lua
 modules\xloot.lua
 
