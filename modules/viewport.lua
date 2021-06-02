@@ -327,6 +327,14 @@ function mod:OnInitialize()
     local parentOptions = tostring(Hiui.optionsName)
     Hiui.optionFrames[name] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(name, options.name, parentOptions)
 
+    if IsAddOnLoaded("Viewporter") then
+        if global.debug then self:Print("You are using the addon \"Viewporter\" so our viewport adjusting feature will be disabled.") end
+        profile.enabled = false
+    end
+
+    --[[ Gray out args. do not modify. --]]
+    if not profile.enabled then disableArgs(options) end
+
     --[[ Module specific on-load routines go here. --]]
 end
 
