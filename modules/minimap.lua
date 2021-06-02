@@ -140,8 +140,8 @@ local features = {
                 xOffset = -280,
                 yOffset = 55,
 
-                height = 200,
-                width = 200,
+                height = 200, -- unused
+                width = 200, -- unused
             }
             --EnableAddOn("BasicMinimap_Options")
             --LoadAddOn("BasicMinimap_Options")
@@ -166,6 +166,8 @@ local features = {
             m:StopMovingOrSizing()
             bm.SetMovable(m, false)
             bm.db.profile.lock = true
+
+            mod:Print("Minimap modified. Reload the UI to apply changes.")
         end
     end,
 }
