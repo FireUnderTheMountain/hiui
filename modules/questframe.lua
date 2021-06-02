@@ -84,7 +84,7 @@ local features = {
 
         btnMinimize.minus = btnMinimize:CreateFontString(nil, 'OVERLAY')
         btnMinimize.minus:SetFont(STANDARD_TEXT_FONT, 15)
-        btnMinimize.minus:SetText('^')
+        btnMinimize.minus:SetText('>')
         btnMinimize.minus:SetPoint('CENTER')
         btnMinimize.minus:SetTextColor(1, 1, 1)
         btnMinimize.minus:SetShadowOffset(1, -1)
@@ -92,7 +92,7 @@ local features = {
 
         btnMinimize.plus = btnMinimize:CreateFontString(nil, 'OVERLAY')
         btnMinimize.plus:SetFont(STANDARD_TEXT_FONT, 15)
-        btnMinimize.plus:SetText('v')
+        btnMinimize.plus:SetText('<')
         btnMinimize.plus:SetPoint('CENTER')
         btnMinimize.plus:SetTextColor(1, 1, 1)
         btnMinimize.plus:SetShadowOffset(1, -1)
