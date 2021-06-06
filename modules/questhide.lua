@@ -40,6 +40,23 @@ mod.db.global, mod.db.profile, mod.db.char
 local global, profile, char
 local trackedQuests, trackedWorldQuests, thisZone
 
+--[[ Delay quest showing --]]
+--[[
+    leftCombat = time()
+    if global.debug then mod:Print("Setting 3 second timer for leaving combat: " .. leftCombat) end
+
+    C_Timer.After(3.1, function()
+        local cTime = time()
+        if cTime - leftCombat >= 3 and not InCombatLockdown() then
+            if global.debug then mod:Print("Successfully reset chat width.") end
+            ChatFrame1:SetWidth(profile.width.ooc)
+            ChatFrame1.timeVisibleSecs = 120
+        elseif global.debug then
+            mod:Print("Not resetting chat frame width due to combat or timer. Timers: " .. cTime .. ", " .. leftCombat)
+        end -- if this fails, its because we left [a second] combat recently, so leftCombat is too big.
+    end)    -- but that also means there's a second After() running that will clean up later.
+--]]
+
 --[[	Quest Hider
 The primary quest hiding function. Will hide all your tracked
 quests and store them for later. If you provide a reason, that
@@ -169,7 +186,7 @@ local function showQuests(reason)
     trackedQuests, trackedWorldQuests = {}, {}
 end
 
---local function questHider_OnEvent(self, event, ...)
+local leftCombat
 local function questHider_OnEvent(event, ...)
     local ntq = (next(trackedQuests) == nil)
     if event == "CHALLENGE_MODE_START" and ntq then
@@ -190,9 +207,20 @@ local function questHider_OnEvent(event, ...)
         if global.debug then mod:Print("Showing quests because " .. event .. ".") end
         showQuests("mplus")
 
-    --[[ TESTING --]]
     elseif event == "PLAYER_REGEN_DISABLED"	then hideQuests("combat")
-    elseif event == "PLAYER_REGEN_ENABLED" then showQuests("combat")
+
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        leftCombat = time()
+        if global.debug then mod:Print("Setting 3 second left-combat timer: " .. leftCombat) end
+
+        C_Timer.After(3.1, function()
+            local cTime = time()
+            if cTime - leftCombat >= 3 and not InCombatLockdown() then
+                showQuests("combat")
+            elseif global.debug then
+                mod:Print("Not showing quests because you entered combat during the countdown. Timers: " .. cTime .. ", " .. leftCombat)
+            end -- if this fails, its because we left [a second] combat recently, so leftCombat is too big.
+        end)    -- but that also means there's a second After() running that will clean up later.
     end
 end
 
@@ -224,8 +252,7 @@ Define all your custom functions that are used by the UI in here. This makes the
 Remember to set/change db values during these functions.
 --]]
 local features = {
-	enable_quest_hiding = function(_, value)
-        profile.enable_quest_hiding = value
+	enable_quest_hiding = function(value)
         if value then
             if global.debug then mod:Print("Enabling quest hiding.") end
             mod:RegisterEvent("CHALLENGE_MODE_START", questHider_OnEvent)
@@ -241,8 +268,7 @@ local features = {
         end
 	end,
 
-    hide_nonzone_quests_during_combat = function(_, value)
-        profile.hide_nonzone_quests_during_combat = value
+    hide_nonzone_quests_during_combat = function(value)
         if value then
         if global.debug then mod:Print("Enabling quest hiding for combat.") end
             mod:RegisterEvent("PLAYER_REGEN_DISABLED", questHider_OnEvent)
@@ -297,14 +323,20 @@ local options = {
 			name = "Enable Relevant Quest Hiding",
 			desc = "Hide quests that are out of zone when you enter combat, and hide all quests when entering M+.",
 			type = "toggle",
-			set = features.enable_quest_hiding,
+			set = function(_, value)
+                profile.enable_quest_hiding = value
+                features.enable_quest_hiding(value)
+            end,
             get = function() return profile.enable_quest_hiding end,
 		},
         hide_nonzone_quests_during_combat = {
             order = 4,
             name = "Hide out-of-zone quests during combat",
             type = "toggle",
-            set = features.hide_nonzone_quests_during_combat,
+            set = function(_, value)
+                profile.hide_nonzone_quests_during_combat = value
+                features.hide_nonzone_quests_during_combat(value)
+            end,
             get = function() return profile.hide_nonzone_quests_during_combat end,
         }
     },
@@ -374,7 +406,8 @@ function mod:OnEnable()
 	end
 
     --[[ Module specific on-run routines go here. --]]
-    features.enable_quest_hiding(_, profile.enable_quest_hiding)
+    features.enable_quest_hiding(profile.enable_quest_hiding)
+    features.hide_nonzone_quests_during_combat(profile.hide_nonzone_quests_during_combat)
 end
 
 function mod:OnDisable()
