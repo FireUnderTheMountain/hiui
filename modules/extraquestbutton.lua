@@ -67,7 +67,7 @@ local features = {
             else
                 if global.debug then mod:Print("Using best guess positioning.") end
                 -- Best Guess It MAGIC NUMBER
-                ExtraQuestButtonAnchor:SetPoint("BOTTOM", UIParent, "BOTTOM", UIParent:GetWidth()*2/3, UIParent:GetHeight()/3)
+                ExtraQuestButtonAnchor:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", UIParent:GetWidth()*2/3, UIParent:GetHeight()/3)
             end
 
             ExtraQuestButtonAnchor:OnDragStop()
