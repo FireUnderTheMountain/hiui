@@ -5,16 +5,14 @@
     The version is used to perform automatic initialization, and should be updated everytime you need first-time init to run again.
 --]]
 local Hiui = LibStub("AceAddon-3.0"):GetAddon("hiUI")
-local name, version = "Extra Quest Button", 0.1
+local name, version = "Extra Quest Button", 0.7
 local mod = Hiui:NewModule(name, "AceEvent-3.0", "AceConsole-3.0")
 mod.modName, mod.version = name, version
-mod.info = "Module information."
+mod.info = "Positions the quest item button automatically."
 mod.depends = { "ExtraQuestButton" }
 
 --[[ Imports --]]
 -- local GlobalUIElement = _G["GlobalUIElement"]
-local ExtraQuestButtonAnchor = _G["ExtraQuestButtonAnchor"]
-local DominosFrameextra = _G["DominosFrameextra"]
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
@@ -34,8 +32,7 @@ local defaults = {
     },
     profile = {
         enabled = false, -- have root addon enable?
-        move_eqb_to_default_pos = false,
-        set_item_range_to_max = false,
+        initialized = 0,
     },
     char = {
     },
@@ -48,25 +45,43 @@ local defaults = {
 --]]
 local features = {
 	move_eqb_to_default_pos = function()
-        RunSlashCmd("/eqb lock")
-        ExtraQuestButtonAnchor:StartMoving()
-        ExtraQuestButtonAnchor:ClearAllPoints()
+        local ExtraQuestButtonAnchor = _G["ExtraQuestButtonAnchor"]
+        local DominosFrameextra = _G["DominosFrameextra"]
 
-        if DominosFrameextra then
-            ExtraQuestButtonAnchor:SetPoint("TOP", DominosFrameextra, "BOTTOM")
-        else
-            -- Best Guess It MAGIC NUMBER
-            ExtraQuestButtonAnchor:SetPoint("BOTTOM", UIParent, "BOTTOM", _G.UIParent:GetWidth()*3/4, _G.UIParent:GetHeight()/3)
-        end
+        if not ExtraQuestButtonAnchor:IsShown() then ExtraQuestButtonAnchor:Toggle() end
 
-        ExtraQuestButtonAnchor:StopMovingOrSizing()
-        RunSlashCmd("/eqb lock")
+        C_Timer.After(0.04, function()
+            ExtraQuestButtonAnchor:OnDragStart() -- :StartMoving()
+            ExtraQuestButtonAnchor:ClearAllPoints()
 
-    	if global.debug then mod:Print("Moved extra quest button anchor.") end
+            if DominosFrameextra then
+                if global.debug then mod:Print("Using dominos position.") end
+
+                local scale = DominosFrameextra:GetScale()
+
+                local h, w = DominosFrameextra:GetBottom(), select(1, DominosFrameextra:GetCenter())
+                if global.debug then mod:Print(w, h) end
+
+                --ExtraQuestButtonAnchor:SetPoint("TOP", DominosFrameextra, "BOTTOM")
+                ExtraQuestButtonAnchor:SetPoint("TOP", UIParent, "BOTTOMLEFT", w*scale, h*scale)
+            else
+                if global.debug then mod:Print("Using best guess positioning.") end
+                -- Best Guess It MAGIC NUMBER
+                ExtraQuestButtonAnchor:SetPoint("BOTTOM", UIParent, "BOTTOM", UIParent:GetWidth()*2/3, UIParent:GetHeight()/3)
+            end
+
+            ExtraQuestButtonAnchor:OnDragStop()
+
+            if ExtraQuestButtonAnchor:IsShown() then ExtraQuestButtonAnchor:Toggle() end
+
+            if global.debug then mod:Print("Moved extra quest button anchor.") end
+        end)
 	end,
 
     set_item_range_to_max = function()
-
+        -- ExtraQuestButton prohibits modifying its settings.
+        InterfaceOptionsFrame_OpenToCategory("ExtraQuestButton")
+        InterfaceOptionsFrame_OpenToCategory("ExtraQuestButton")
     end,
 }
 
@@ -116,8 +131,8 @@ local options = {
 		},
         set_item_range_to_max = {
             order = 4,
-            name = "Show EQB at long range.",
-            desc = "These settings can be fine tuned from EQBs options page.",
+            name = "EQB Settings",
+            desc = "EQB prohibits other addons from modifying it. We recommend setting item distance to maximum and enabling \"Only show in zone\", and optionally hiding the art, as it may overlap other frames.",
             type = "execute",
             func = features.set_item_range_to_max,
         }
@@ -172,14 +187,10 @@ function mod:OnEnable()
     enableArgs(options) -- do not remove.
 
     --[[ First time enablement, run if we've updated this module. --]]
-	if not profile.move_eqb_to_default_pos then
+    if profile.initialized < mod.version then
+        if global.debug then mod:Print("Update.") end
         features.move_eqb_to_default_pos()
-        profile.move_eqb_to_default_pos = true
-    end
-
-    if not profile.set_item_range_to_max then
-        features.set_item_range_to_max()
-        profile.set_item_range_to_max = true
+        profile.initialized = mod.version
     end
 
     --[[ Module specific on-run routines go here. --]]
