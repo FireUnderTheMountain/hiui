@@ -160,7 +160,7 @@ function mod:OnEnable()
 
     enableArgs(options) -- do not remove.
 
-    --[[ First time enablement, run if we've updated this module. --]]
+    --[[ First time enablement, run if we've updated this module. You can modify this according to the module's needs. --]]
 	if char.initialized < mod.version then
 		for _, feature in pairs(features) do
 			feature()
