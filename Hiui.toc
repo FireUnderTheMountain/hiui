@@ -31,6 +31,7 @@ modules\candy.lua
 modules\chatframe.lua
 modules\details.lua
 modules\dominos.lua
+modules\dynamicframepositions.lua
 modules\extraquestbutton.lua
 modules\grid2.lua
 modules\minimap.lua
@@ -39,3 +40,4 @@ modules\questframe.lua
 modules\questhide.lua
 modules\viewport.lua
 modules\xloot.lua
+modules\actionbarpagingassist.lua
