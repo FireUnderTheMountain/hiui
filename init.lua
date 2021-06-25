@@ -91,7 +91,7 @@ function Hiui:OnEnable()
 	for modName, mod in self:IterateModules() do
 		if db.global.debug then self:Print(modName) end
 
-		if mod.db.profile.enabled then -- must be turned on in its own settings
+		if mod.db and mod.db.profile and mod.db.profile.enabled then -- must be turned on in its own settings
 			if mod.depends then -- and its self-described dependencies must be met
 				if db.global.debug then self:Print("Checking dependencies for " .. modName) end
 
