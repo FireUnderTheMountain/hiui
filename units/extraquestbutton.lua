@@ -11,7 +11,7 @@ local DEBUG_BASIC_MOVEMENT = true
 function hiui.run.ExtraQuestButton()
 	local ExtraQuestButtonAnchor = _G["ExtraQuestButtonAnchor"]
 	local DominosFrameextra = _G["DominosFrameextra"]
-	
+
 	--if select(2, IsAddOnLoaded("Dominos")) then
 	--	msg("EQB using dominos extra action button.", DEBUG)
 	--	local abilityContainer = _G["DominosFrameextra"]
@@ -48,4 +48,4 @@ function hiui.run.ExtraQuestButton()
 
 	hiuiDB.QuestButtonPositioned = hiui.version
 
-end	
+end
