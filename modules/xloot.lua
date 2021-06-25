@@ -38,6 +38,16 @@ local detailsY = 0 + 55 + 1 + xlaH
 --]]
 local global, profile, char
 
+local function setHiuiProfile(p)
+    p = mod.db.parent:GetCurrentProfile() or p or "Hiui"
+
+    if xl.db:GetCurrentProfile() ~= p then
+        if global.debug then mod:Print("Candy profile isn't " .. p .. ", changing that so we can preserve your past settings.") end
+        xl.db:SetProfile(p)
+    end
+
+    return xl.db:GetCurrentProfile() == p
+end
 
 local anchorTable = {
     direction = "up",
@@ -76,8 +86,7 @@ local defaults = {
 --]]
 local features = {
     align_loot_above_minimap = function()
-        local m = mod.db.parent:GetCurrentProfile()
-        if xl.db:GetCurrentProfile() ~= m then
+        if not setHiuiProfile() then
             mod:Print("XLoot is set to a personal profile. Please open XLoot options and set your profile to \"" .. m .. "\".")
             return
         end
@@ -93,8 +102,7 @@ local features = {
     end,
 
     align_loot_on_details = function()
-        local m = mod.db.parent:GetCurrentProfile()
-        if xl.db:GetCurrentProfile() ~= m then
+        if not setHiuiProfile() then
             mod:Print("XLoot is set to a personal profile. Please open XLoot options and set your profile to \"" .. m .. "\".")
             return
         end

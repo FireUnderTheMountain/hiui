@@ -32,6 +32,15 @@ local global, profile, char
 
 --[[ Local Use
 --]]
+local function setHiuiProfile(p)
+    p = mod.db.parent:GetCurrentProfile() or p or "Hiui"
+
+    if Candy.db:GetCurrentProfile() ~= p then
+        if global.debug then mod:Print("Candy profile isn't " .. p .. ", changing that so we can preserve your past settings.") end
+        Candy.db:SetProfile(p)
+    end
+end
+
 local function setPoint(broker, point, relativeTo, relativePoint, x, y)
 	Candy.db.global.bars[broker]["anchors"][1]["point"] = point
 	Candy.db.global.bars[broker]["anchors"][1]["relativeTo"] = relativeTo
@@ -45,7 +54,6 @@ local candyGlobal = {
     ["fontSize"] = 13,
     ["fontOutline"] = "OUTLINE",
     ["locked"] = true,
-
 }
 
 local controlledBars = {
@@ -344,6 +352,7 @@ Remember to set/change db values during these functions.
 local features = {
     -- This actually only resets VISIBLE frames, otherwise :RemoveCandy() errors on `addon.ActiveBars[broker]:Hide()`
     reset_all_frames = function()
+        setHiuiProfile()
         --for k,_ in pairs(Candy.db.global.bars) do
         --    if Candy.ActiveBars[k] then Candy:RemoveCandy(k) end
         for b,_ in pairs(Candy.ActiveBars) do
@@ -355,6 +364,8 @@ local features = {
     end,
 
     place_controlled_bars = function()
+        setHiuiProfile()
+
         if global.debug then mod:Print("Placing bars from Hiui structure into candy.") end
         -- Using both AddCandy or CreateCandyBar needs an icon and the text because that's how they do it in their drop down menu. God i hate mixing UI and code...
         -- local brokerNames = Candy:GetAddableBrokers()
@@ -397,6 +408,8 @@ local features = {
     end,
 
     hide_uncontrolled_bars = function()
+        setHiuiProfile()
+
         if global.debug then mod:Print("Hiding any shown bars that aren't supposed to be there.") end
         for k,_ in pairs(Candy.ActiveBars) do
             if not controlledBars[k] then
@@ -406,6 +419,8 @@ local features = {
     end,
 
     apply_candy_globals = function()
+        setHiuiProfile()
+
         if global.debug then mod:Print("Applying globals to candy structure.") end
         Candy:SetGlobalBackgroundColor(0, 0, 0, 0)
         Candy:SetGlobalFontSize(candyGlobal.fontSize)
@@ -539,6 +554,7 @@ function mod:OnEnable()
 
     --[[ First time enablement, run if we've updated this module. You can modify this according to the module's needs. --]]
 	if global.readyForInit then
+
         C_Timer.After(0.06, features.apply_candy_globals)
         -- Heuristically determined this delay:
         C_Timer.After(0.1, features.place_controlled_bars)

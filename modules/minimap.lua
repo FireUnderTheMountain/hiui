@@ -10,6 +10,7 @@ mod.info = "Minimap button hiding and BasicMinimap positioning and customization
 mod.depends = { "BasicMinimap" }
 
 --[[ Imports --]]
+local bm = _G["BasicMinimap"]
 
 --[[    Database Access
     Store all of this module's variables under "global", "profile", or "char" respectively. These are shortcuts to their long forms:
@@ -18,6 +19,18 @@ mod.depends = { "BasicMinimap" }
     mod.db.char
 --]]
 local global, profile, char
+
+--[[ Locals --]]
+local function setHiuiProfile(p)
+    p = mod.db.parent:GetCurrentProfile() or p or "Hiui"
+
+    if bm.db:GetCurrentProfile() ~= p then
+        if global.debug then mod:Print("Candy profile isn't " .. p .. ", changing that so we can preserve your past settings.") end
+        bm.db:SetProfile(p)
+    end
+
+    return bm.db:GetCurrentProfile() == p
+end
 
 --[[    Default Values
     You should include at least the following:
@@ -34,8 +47,7 @@ local defaults = {
         clean_misc_minimap_icons = true,
     },
     char = {
-        initialized = 0, -- used for first time load
-        set_basicminimap_pos = 0,
+        set_basicminimap_pos = 0, -- first time load
         clean_misc_minimap_icons = 0,
     },
 }
@@ -124,10 +136,8 @@ local features = {
     end,
 
     set_basicminimap_pos = function()
-        local bm = _G["BasicMinimap"]
-
         if bm then
-            if bm.db:GetCurrentProfile() ~= mod.db.parent:GetCurrentProfile() then
+            if not setHiuiProfile() then
                 mod:Print("Hiui only operates on addons that use the same profile as it. Please type /bm and set your BasicMinimap profile to \"" .. mod.db.parent:GetCurrentProfile() .. "\".")
                 return
             end
