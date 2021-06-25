@@ -75,6 +75,12 @@ local features = {
         -- end)
     end,
     skin_quest_frame = function()
+        --[[ Class colors
+        --]]
+        local _, class  = UnitClass("player")
+        local classColor    = _G["RAID_CLASS_COLORS"][class]
+
+
         local btnMinimize = otf.HeaderMenu.MinimizeButton
         btnMinimize:SetSize(15, 15)
         --btnMinimize:ClearAllPoints()
