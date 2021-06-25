@@ -144,15 +144,16 @@ local controlledBars = {
                 ["relativeTo"] = "Minimap",
                 ["point"] = "TOP",
                 ["relativePoint"] = "BOTTOM",
-                x = 0, y = -3,
+                x = 0, y = -4,
             }, -- [1]
         },
         justify = "CENTER",
         fontOutline = "THICKOUTLINE",
+        fontSize = 12,
         --fixedWidth= 202, -- causes issues, and names don't normally run this wide anyways.
-        visibility = {
-            instanceMode = 3,
-        },
+        -- visibility = { -- don't use this because we use GPS for access to hearthstones.
+        --     instanceMode = 3,
+        -- },
     },
 
     ["Difficulty"] = {
@@ -544,10 +545,14 @@ function mod:OnEnable()
         C_Timer.After(0.3, features.hide_uncontrolled_bars)
 
         --Candy:UpdateCandyBars();
+
+        C_Timer.After(5, function() mod:Print("You may need to reload the UI one more time after creating all these candy bars if they show too much text!") end)
+
         global.readyForInit = nil
     end
 
     --[[ Module specific on-run routines go here. --]]
+    C_Timer.After(0.5, function() Candy:UpdateVisibility() end)
 end
 
 function mod:OnDisable()
