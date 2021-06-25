@@ -10,6 +10,7 @@ mod.modName, mod.version = name, version
 mod.info = "Chat frame modifications - in-combat chat shrinking, primary chat frame purification, moving the chat frame to the corner of the screen, etc."
 
 --[[ Imports --]]
+local UIParent = _G["UIParent"]
 local ChatFrame1 = _G["ChatFrame1"]
 local ChatFrame1Tab = _G["ChatFrame1Tab"]
 local ChatFrame1Background = _G["ChatFrame1Background"]
@@ -46,11 +47,13 @@ local defaults = {
     profile = {
         enabled = false,
         width = {
-            ooc = uiWidth*35/100, -- magic number
+            ooc = 35.9/100, -- magic number
             ic = uiWidth*23/100, -- magic number
         },
-        bottomOffset = 6, -- magic number, make user config
-        leftOffset = 6, -- magic number, make user config
+        --bottomOffset = 6, -- magic number, make user config
+        --leftOffset = 2, -- magic number, make user config
+        bottomOffset = 4,   -- testing
+        leftOffset = 2,     -- testing
         corner_chat_every_login = false,
         size_chat_for_combat = true,
         hide_chat_buttons = true,
@@ -83,8 +86,10 @@ local features = {
             if (not (left or bot)) or
               left > (profile.leftOffset + 0.1) or
               left < (profile.leftOffset - 0.1) or
-              bot > (39.5 + 0.1) or
-              bot < (39.5 - 0.1) then
+              --bot > (39.5 + 0.1) or
+              bot > (43.5 + 0.1) or
+              --bot < (39.5 - 0.1) then
+              bot < (43.5 - 0.1) then
                 mod:Print("Pre-move debug message. Chat frame not cornered. We will do that!")
                 mod:Print(ChatFrame1:GetPoint(1))
               else
@@ -155,7 +160,7 @@ local features = {
                 elseif global.debug then
                     mod:Print("Not resetting chat frame width due to combat or timer. Timers: " .. cTime .. ", " .. leftCombat)
                 end -- if this fails, its because we left [a second] combat recently, so leftCombat is too big.
-            end)    -- but that also means there's a second After() running that will clean up later.
+            end)    -- but that also means there's a second After() running that will clean up later - all is well.
         end
     end,
 
