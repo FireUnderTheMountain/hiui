@@ -87,7 +87,7 @@ local options = {
         },
         nameplate_import_string = {
 			name = "Plater Profile Import String",
-			desc = "Paste this string into Plater for Hiui nameplates. Grid2 -> Profiles -> Import&Export -> Import profile",
+			desc = "Paste this string into Plater for Hiui nameplates. Plater -> Profiles -> Import profile",
             width = "full",
 			type = "input",
             multiline = 5,
