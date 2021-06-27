@@ -385,7 +385,9 @@ local features = {
         for broker,settings in pairs(controlledBars) do
             Candy:AddCandy(broker)
             local frame = Candy.ActiveBars[broker]
-            frame.data = Candy.db.global.bars[broker] -- posterity
+            if frame then -- ActiveBars sometimes won't return a frame, even if it works otherwise.
+                frame.data = Candy.db.global.bars[broker] -- posterity
+            end
             --mod:Print(frame, frame:GetName())
 
             for k,v in pairs(settings) do
@@ -396,7 +398,9 @@ local features = {
             -- frame.data.backgroundColor = { unpack(Candy.db.global.backgroundColor) }
             -- frame.background:SetVertexColor(unpack(frame.data.backgroundColor))
             -- frame.background:Hide()
-            frame.configBackground:Hide()
+            if frame then -- frame may not exist
+                frame.configBackground:Hide()
+            end
 
             -- local a = Candy.db.global.bars[broker].anchors[1]
             -- frame:ClearAllPoints()
