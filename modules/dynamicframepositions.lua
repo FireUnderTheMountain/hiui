@@ -225,6 +225,7 @@ local function moveFrame(f)
                 mod:Print("Moved " .. _G[f]:GetName() .. " to:")
                 mod:Print(_G[f]:GetPoint(1))
             end
+            profile.frames[f] = profile.frames[f] or {}
             profile.frames[f].absPos = { _G[f]:GetPoint(1) }
             profile.frames[f].absPos[2] = _G[f]:GetName() or nil
             profile.frames[f].absPos[4] = profile.frames[f].absPos[4] or 0
@@ -245,17 +246,22 @@ local features = {
             end
         end
     end,
-    run_each_login = function()
+    run_each_login = function(force_debug)
         if global.debug then mod:Print("Running logon routing.") end
 
-        local debug = global.debug
-        global.debug = true
+        local debug = false
+        if force_debug then
+            debug = global.debug
+            global.debug = true
+        end
 
         for k,_ in pairs(MoveAnythingData) do
             moveFrame(k)
         end
 
-        global.debug = debug
+        if force_debug then
+            global.debug = debug
+        end
     end,
 }
 
@@ -379,7 +385,7 @@ function mod:OnEnable()
     end
 
     if profile.run_each_login then
-        features.run_each_login() -- force move
+        features.run_each_login(false) -- force move
         --features.run_each_login()
     else
         features.position_all() -- clean move
