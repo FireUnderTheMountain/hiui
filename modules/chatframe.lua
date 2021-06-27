@@ -47,8 +47,9 @@ local defaults = {
     profile = {
         enabled = false,
         width = {
-            ooc = 35.9/100, -- magic number
+            ooc = 35.9/100 * GetScreenWidth(), -- magic number
             ic = uiWidth*23/100, -- magic number
+            -- change to percentage of ooc.
         },
         --bottomOffset = 6, -- magic number, make user config
         --leftOffset = 2, -- magic number, make user config
