@@ -111,6 +111,7 @@ https://wowpedia.fandom.com/wiki/Layer
 
 UnitFrames = {
     splitlevel = {
+        Health = { layer = nil, level = nil },
         HealthArt = { layer = "ARTWORK", level = 2, },
         ClassHighlight = { layer = "ARTWORK", level = 3, },
         SelectionHighlight = { layer = "ARTWORK", level = 3, },
@@ -141,6 +142,13 @@ UnitFrames = {
         RaidRoleIndicator = { layer = "ARTWORK", level = 2, },
         AssistantIndicator = { layer = "ARTWORK", level = 2, },
         QuestIndicator = { layer = "ARTWORK", level = nil, },
+        Castbar = { layer = nil, level = parent.Health:GetFrameLevel() + 1}
+        ["Castbar.bg"] = { layer = "OVERLAY", level = nil, },
+        ["Castbar.Spark"] = { layer = "OVERLAY", level = nil, },
+        ["Castbar.Time"] = { layer = "OVERLAY", level = nil, },
+        ["Castbar.Text"] = { layer = "OVERLAY", level = nil, },
+        ["Castbar.Icon"] = { layer = "OVERLAY", level = nil, },
+        ["Castbar.Shield"] = { layer = "OVERLAY", level = select(2, shield:GetDrawLayer()) + 1}
     },
 }
 
