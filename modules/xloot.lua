@@ -87,7 +87,6 @@ local defaults = {
 local features = {
     align_loot_above_minimap = function()
         if not setHiuiProfile() then
-            mod:Print("XLoot is set to a personal profile. Please open XLoot options and set your profile to \"" .. m .. "\".")
             return
         end
 
@@ -103,7 +102,6 @@ local features = {
 
     align_loot_on_details = function()
         if not setHiuiProfile() then
-            mod:Print("XLoot is set to a personal profile. Please open XLoot options and set your profile to \"" .. m .. "\".")
             return
         end
 
