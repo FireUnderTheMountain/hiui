@@ -156,8 +156,8 @@ end
 
 function TrackingStorage_Save(sparse)
     sparse = (sparse and true or false)
-    for i=1, GetNumTrackingTypes() do
-        local t, _, active, _ = GetTrackingInfo(i)
+    for i=1, C_Minimap.GetNumTrackingTypes() do
+        local t, _, active = C_Minimap.GetTrackingInfo(i)
         active = (active or false) -- these shenanigans seem unnecessary in modern wow
         local different = mainTracking[t] ~= nil and mainTracking[t] ~= active
         --mod:Print(t, " is ", different, "different from ", mainTracking[t], ".")
@@ -192,8 +192,8 @@ function TrackingStorage_Load()
         return
     end
 
-    for i=1, GetNumTrackingTypes() do
-        local name, _, active, _ = GetTrackingInfo(i)
+    for i=1, C_Minimap.GetNumTrackingTypes() do
+        local name, _, active = C_Minimap.GetTrackingInfo(i)
         active = (active or false)
 
         --if category ~= "other" and active then
@@ -203,7 +203,7 @@ function TrackingStorage_Load()
             --msg(name .. " isn't tracked account wide so we won't change it. Maybe you want to run a sparse save to add it?", INFO_TRACKING_RESTORE_NOT_ACCOUNT_WIDE)
         elseif active ~= mainTracking[name] then
             --msg("Toggling " .. name .. " because you want it " .. (mainTracking[name] and "enabled." or "disabled."), INFO_TRACKING_RESTORE_CHANGES)
-            SetTracking(i, (mainTracking[name] and true))
+            C_Minimap.SetTracking(i, (mainTracking[name] and true))
         end
     end
 
