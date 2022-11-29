@@ -133,6 +133,11 @@ local features = {
                 RunSlashCmd("/plater minimap")
             end
         end
+
+        local bobConfigExists = bobSatchelsSaved and bobSatchelsSaved[UnitName("player").."-"..GetRealmName()] and (bobSatchelsSaved[UnitName("player").."-"..GetRealmName()]["minimap"] == true)
+        if IsAddOnLoaded("bobSatchels") and bobConfigExists then
+            bobSatchelsSaved[UnitName("player").."-"..GetRealmName()]["minimap"] = false;
+        end
     end,
 
     set_basicminimap_pos = function()
