@@ -177,6 +177,10 @@ local function disableArgs(optionsTable)
 end
 
 function mod:OnInitialize()
+    if not _G["Details"] then -- make this check mod.depends array.
+        return
+    end
+
     --[[ data initialization. do not modify. --]]
     self.db = Hiui.db:RegisterNamespace(name, defaults)
     global = self.db.global
@@ -197,6 +201,10 @@ function mod:OnInitialize()
 end
 
 function mod:OnEnable()
+    if not _G["Details"] then -- make this check mod.depends array.
+        return
+    end
+
     --[[ For combat-unsafe mods. --]]
     if InCombatLockdown() then
         return self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEnable")
